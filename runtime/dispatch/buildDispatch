@@ -1,0 +1,60 @@
+#!/bin/sh
+
+checkError()
+{
+    if [ "${1}" -ne "0" ]; then
+        echo "*** Error: ${2}"
+        exit ${1}
+    fi
+}
+
+
+build_opengcd()
+{
+	if [ ! -d opengcd ]; then
+		git clone https://github.com/mheily/opengcd.git
+		pushd opengcd
+		./autogen.sh
+	
+		patch -p0 -i ../libkqueue_signal.patch
+		patch -p0 -i ../libkqueue_makefile.patch
+	
+		pushd libdispatch
+	    patch -p0 < ../patch/dispatch-workaround.diff 
+	    patch -p0 < ../patch/dispatch-spawn.diff
+		patch -p0 < ../../dispatch_disable_test.patch
+		
+		autoreconf -fvi
+		
+	    patch -p1 < ../../libtool_android_version.patch
+		autoconf
+		popd
+	
+		./autogen.sh
+		popd
+	fi
+
+	pushd opengcd
+	
+	if [ ! -f $MIRAI_SDK_PREFIX/lib/libBlocksRuntime.a ]; then
+
+	CFLAGS="-DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
+
+	make
+	make install	
+	fi
+
+	pushd libdispatch
+	CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX
+	make 
+	make install
+	popd
+	
+	
+	popd
+}
+
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libdispatch.so ]; then
+    echo "Building libDispatch"
+	build_opengcd
+fi

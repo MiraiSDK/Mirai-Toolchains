@@ -1,0 +1,18 @@
+--- libkqueue/Makefile.am	2014-08-09 21:13:02.000000000 +0800
++++ libkqueue/Makefile.am	2014-08-09 21:08:44.000000000 +0800
+@@ -30,7 +30,6 @@
+        src/common/tree.h \
+        src/linux/platform.h
+ 
+-libkqueue_la_LIBADD = -lpthread -lrt
+ 
+ pkgconfigdir=$(libdir)/pkgconfig
+ pkgconfig_DATA=libkqueue.pc
+@@ -53,6 +52,6 @@
+ 
+ kqtest_CFLAGS = -g -O0 -Wall -Werror -I./include -I./test
+ 
+-kqtest_LDADD = -lpthread -lrt libkqueue.la
++kqtest_LDADD = libkqueue.la
+ 
+ 

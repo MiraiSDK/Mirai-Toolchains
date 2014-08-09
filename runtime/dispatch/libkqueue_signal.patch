@@ -1,0 +1,11 @@
+--- libkqueue/src/linux/signal.c	2014-08-09 21:13:02.000000000 +0800
++++ libkqueue/src/linux/signal.c	2014-08-09 21:10:16.000000000 +0800
+@@ -19,7 +19,7 @@
+ #if HAVE_SYS_SIGNALFD_H
+ # include <sys/signalfd.h>
+ #else
+-#define signalfd(a,b,c) syscall(SYS_signalfd, (a), (b), (c))
++#define signalfd(a,b,c) syscall(__NR_signalfd4, (a), (b), (c))
+ #define SFD_NONBLOCK 04000
+ struct signalfd_siginfo
+ {

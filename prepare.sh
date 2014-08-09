@@ -196,3 +196,9 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-base.so ]; then
 	popd
 fi
 
+#9. Dependencies
+pushd $SCRIPT_ROOT/dependencies
+./build.sh
+checkError $? "build dependencies failed"
+
+popd

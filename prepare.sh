@@ -202,3 +202,13 @@ pushd $SCRIPT_ROOT/dependencies
 checkError $? "build dependencies failed"
 
 popd
+
+#10. CoreFoundation (gnustep-corebase)
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-corebase.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreFoundation
+	./toolchain_build.sh
+	checkError $? "build Core Foundation failed"
+	popd
+fi
+
+#11.

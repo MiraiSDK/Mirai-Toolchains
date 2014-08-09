@@ -89,4 +89,5 @@ checkError $? "Make install android version failed"
 echo "Clean..."
 rm -rf build_icu_osx
 rm -rf build_icu_android
+rm -r icu
 popd

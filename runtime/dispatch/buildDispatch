@@ -41,6 +41,8 @@ build_opengcd()
 	CFLAGS="-DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
 
 	make
+	checkError $? "build dispatch dependencies failed"
+	
 	make install	
 	fi
 
@@ -48,10 +50,14 @@ build_opengcd()
 	CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX
 	make 
 	make install
+	checkError $? "build libdispatch failed"
 	popd
 	
 	
 	popd
+	
+	#clean up
+	rm -rf opengcd
 }
 
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libdispatch.so ]; then

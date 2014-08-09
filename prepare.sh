@@ -144,6 +144,10 @@ buildGNUstepMake()
     checkError $? "Make install gnutsep-make failed"
 
 	popd
+	
+	#clean up
+	rm gnustep-make-2.6.2.tar.gz
+	rm -r gnustep-make-2.6.2
 	popd
 }
 

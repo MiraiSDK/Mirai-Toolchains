@@ -40,5 +40,6 @@ if [ ! -f $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/libxml2.a ]; then
 	popd
 	
 	#clean up
+	rm libxml2-2.9.0.tar.gz
 	rm -rf libxml2-2.9.0
 fi

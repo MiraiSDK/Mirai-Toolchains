@@ -39,5 +39,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 	checkError $? "make install objc2 failed"
 	
 	popd
+	
+	#clean up
+	rm -r libobjc2
 
 fi

@@ -178,11 +178,20 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libicui18n.a ]; then
 	popd
 fi
 
-exit 0;
-#6. Foundation(gnustep-base)
+#7. libiconv
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libiconv.a ]; then
+	pushd $SCRIPT_ROOT/iconv
+	./build_iconv.sh
+	checkError $? "Make install iconv failed"
+	popd
+fi
+
+. $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/GNUstep.sh
+
+#8. Foundation(gnustep-base)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-base.so ]; then
-	pushd $MIRAI_PROJECTS_PATH/Foundation
-	./buildgnustep-base.sh
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-Foundation
+	./toolchain_build.sh
 	checkError $? "build gnustep-base failed"
 	popd
 fi

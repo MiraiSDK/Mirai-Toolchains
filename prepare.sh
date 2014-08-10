@@ -292,3 +292,10 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
 	xcodebuild -target OpenGLES-Android
 	popd
 fi
+
+#18. QuartzCore
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-QuartzCore
+	xcodebuild -target GSQuartzCore-Android
+	popd
+fi

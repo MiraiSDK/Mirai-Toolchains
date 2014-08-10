@@ -341,4 +341,14 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
 	popd
 fi
 
+#22. MediaPlayer
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-MediaPlayer
+	xcodebuild -target MediaPlayer-Android
+	checkError $? "build MediaPlayer failed"
+	
+	#clean up
+	rm -r build
+	popd
+fi
 

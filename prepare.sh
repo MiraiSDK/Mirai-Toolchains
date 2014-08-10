@@ -181,7 +181,7 @@ popd
 ### objc runtime ready ###
 echo "successful build objc runtime."
 
-## rebuild gnustep-make
+#6. rebuild gnustep-make
 if grep USE_OBJC_EXCEPTIONS $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/config.make | grep no; then
 buildGNUstepMake
 cleanupGNUstepMake
@@ -189,7 +189,7 @@ fi
 
 echo "start building Foundation..."
 
-#6. iccu
+#7. iccu
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libicui18n.a ]; then
 	pushd $SCRIPT_ROOT/icu
 	./build_icu.sh
@@ -197,7 +197,7 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libicui18n.a ]; then
 	popd
 fi
 
-#7. libiconv
+#8. libiconv
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libiconv.a ]; then
 	pushd $SCRIPT_ROOT/iconv
 	./build_iconv.sh
@@ -207,7 +207,7 @@ fi
 
 . $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/GNUstep.sh
 
-#8. Foundation(gnustep-base)
+#9. Foundation(gnustep-base)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-base.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-Foundation
 	./toolchain_build.sh
@@ -215,14 +215,14 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-base.so ]; then
 	popd
 fi
 
-#9. Dependencies
+#10. Dependencies (png, jpeg, tiff, expat, freetype, fontconfig, lcms)
 pushd $SCRIPT_ROOT/dependencies
 ./build.sh
 checkError $? "build dependencies failed"
 
 popd
 
-#10. CoreFoundation (gnustep-corebase)
+#11. CoreFoundation (gnustep-corebase)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-corebase.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreFoundation
 	./toolchain_build.sh
@@ -230,12 +230,12 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-corebase.so ]; then
 	popd
 fi
 
-# patch
+#12. patch
 pushd $SCRIPT_ROOT/Xcode_Integration/toolchainPatchs
 ./patchToolchainLd
 popd
 
-# makeup fake Frameworks folders
+#13. makeup fake Frameworks folders
 mkdir -p $MIRAI_SDK_PATH/System/Library/Frameworks
 pushd $MIRAI_SDK_PATH/System/Library/Frameworks
 	mkdir -p CoreFoundation.framework Foundation.framework GNUstepBase.framework
@@ -257,7 +257,7 @@ popd
 #####################
 ### Core Graphics ###
 #####################
-#11. cairo
+#14. cairo
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libcairo.a ]; then
 	pushd $SCRIPT_ROOT/cairo
 	./buildCairo.sh
@@ -265,7 +265,7 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libcairo.a ]; then
 	popd
 fi
 
-#12. Core Graphics (opal)
+#15. Core Graphics (opal)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
 	echo "build CoreGraphics..."
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreGraphics
@@ -274,3 +274,15 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
 	
 	popd
 fi
+
+#################
+### Core Text ###
+#################
+
+#16.Core Text
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreText
+	./toolchain_build.sh
+	popd
+fi
+

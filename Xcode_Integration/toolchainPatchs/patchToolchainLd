@@ -1,0 +1,18 @@
+#!/bin/bash
+
+pushd `pwd`/`dirname $0`
+FILE_ROOT=`pwd`
+popd
+
+pushd $STANDALONE_TOOLCHAIN_PATH/arm-linux-androideabi/bin
+
+if [ -f realld ]; then
+	echo "already pached"
+	exit 0
+fi
+
+#rename ld
+mv ld realld
+cp $FILE_ROOT/ld ld
+
+popd

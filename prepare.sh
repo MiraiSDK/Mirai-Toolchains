@@ -146,8 +146,18 @@ buildGNUstepMake()
 	popd
 	
 	#clean up
-	rm gnustep-make-2.6.2.tar.gz
+	# we don't remove downloaded file here, because we needs re-build after objc built.
 	rm -r gnustep-make-2.6.2
+	popd
+}
+
+cleanupGNUstepMake()
+{
+	pushd $SCRIPT_ROOT/gnustep-make
+	
+	#clean up
+	rm gnustep-make-2.6.2.tar.gz
+	
 	popd
 }
 
@@ -167,6 +177,12 @@ popd
 
 ### objc runtime ready ###
 echo "successful build objc runtime."
+
+## rebuild gnustep-make
+if grep USE_OBJC_EXCEPTIONS $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/config.make | grep no; then
+buildGNUstepMake
+cleanupGNUstepMake
+fi
 
 echo "start building Foundation..."
 
@@ -211,4 +227,47 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-corebase.so ]; then
 	popd
 fi
 
-#11.
+# patch
+pushd $SCRIPT_ROOT/Xcode_Integration/toolchainPatchs
+./patchToolchainLd
+popd
+
+# makeup fake Frameworks folders
+mkdir -p $MIRAI_SDK_PATH/System/Library/Frameworks
+pushd $MIRAI_SDK_PATH/System/Library/Frameworks
+	mkdir -p CoreFoundation.framework Foundation.framework GNUstepBase.framework
+
+	pushd CoreFoundation.framework
+	ln -sf $MIRAI_SDK_PREFIX/include/CoreFoundation Headers
+	popd
+	
+	pushd Foundation.framework  
+	ln -sf $MIRAI_SDK_PREFIX/include/Foundation Headers
+	popd
+	
+	pushd GNUstepBase.framework
+	ln -sf $MIRAI_SDK_PREFIX/include/GNUstepBase Headers
+	popd
+	
+popd
+
+#####################
+### Core Graphics ###
+#####################
+#11. cairo
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libcairo.a ]; then
+	pushd $SCRIPT_ROOT/cairo
+	./buildCairo.sh
+	checkError $? "build cairo failed"
+	popd
+fi
+
+#12. Core Graphics (opal)
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
+	echo "build CoreGraphics..."
+	pushd $MIRAI_PROJECT_ROOT_PATH/CoreGraphics
+	xcodebuild -target CoreGraphics-Android
+	checkError $? "build CoreGraphics failed"
+	
+	popd
+fi

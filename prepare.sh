@@ -272,6 +272,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
 	xcodebuild -target CoreGraphics-Android
 	checkError $? "build CoreGraphics failed"
 	
+	#clean up
+	rm -r build
 	popd
 fi
 
@@ -290,6 +292,10 @@ fi
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-OpenGLES
 	xcodebuild -target OpenGLES-Android
+	checkError $? "build OpenGLES failed"
+	
+	#clean up
+	rm -r build
 	popd
 fi
 
@@ -297,5 +303,42 @@ fi
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-QuartzCore
 	xcodebuild -target GSQuartzCore-Android
+	checkError $? "build QuartzCore failed"
+	
+	#clean up
+	rm -r build
 	popd
 fi
+
+#############
+### UIKit ###
+#############
+
+#19. create a empty availability
+if [ ! -f $MIRAI_SDK_PREFIX/include/Availability.h ]; then
+	touch $MIRAI_SDK_PREFIX/include/Availability.h
+fi
+
+#20. TNJavaHelper
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libTNJavaHelper.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit/TNJavaHelper
+	xcodebuild -target TNJavaHelper-Android
+	checkError $? "build JavaHelper failed"
+	
+	#clean up
+	rm -r build
+	popd
+fi
+
+#21. UIKit
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit
+	xcodebuild -target UIKit
+	checkError $? "build UIKit failed"
+	
+	#clean up
+	rm -r build
+	popd
+fi
+
+

@@ -100,4 +100,9 @@ checkError $? "Make pixman failed"
 buildCairo
 checkError $? "Make cairo failed"
 
+#we enable cairo glesv2, needs let pkgconfig know where is glesv2
+#otherwise anything depends cairo will failed.
+if [ ! -f $MIRAI_SDK_PREFIX/lib/pkgconfig/glesv2.pc ]; then
+	cp glesv2.pc $MIRAI_SDK_PREFIX/lib/pkgconfig/glesv2.pc
+fi
 

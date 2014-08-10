@@ -1,0 +1,10 @@
+prefix=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/Android18.sdk/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: glesv2
+Description: OpenGL ES v2
+Version: 2.0
+Libs: -L${libdir} -lGLESv2
+Cflags: -I${includedir}

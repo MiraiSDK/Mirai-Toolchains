@@ -286,3 +286,9 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ]; then
 	popd
 fi
 
+#17. OpenGL ES
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-OpenGLES
+	xcodebuild -target OpenGLES-Android
+	popd
+fi

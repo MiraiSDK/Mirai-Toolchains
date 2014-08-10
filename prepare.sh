@@ -268,7 +268,7 @@ fi
 #12. Core Graphics (opal)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
 	echo "build CoreGraphics..."
-	pushd $MIRAI_PROJECT_ROOT_PATH/CoreGraphics
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreGraphics
 	xcodebuild -target CoreGraphics-Android
 	checkError $? "build CoreGraphics failed"
 	

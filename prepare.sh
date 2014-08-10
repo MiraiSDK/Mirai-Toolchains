@@ -19,6 +19,7 @@ export ANDROID_JDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/adt-bundle-mac-x86_64-2013
 fi
 
 export MIRAI_SDK_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/Android18.sdk"
+export MIRAI_SDK_PREFIX="$MIRAI_SDK_PATH/usr"
 
 export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-arm"
 export GNUSTEP_MAKE_CONFIG_PATH="$SCRIPT_ROOT/gnu-config"
@@ -107,13 +108,15 @@ export PATH=$PATH:$STANDALONE_TOOLCHAIN_PATH/bin # Add Android toolchain to PATH
 #3. link sdk path
 echo "prepare xcode sdk..."
 export MIRAI_LOCAL_XCODE_SDK_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18.sdk"
-if [ -d "$MIRAI_LOCAL_XCODE_SDK_PATH" ]; then
-	rm -r "$MIRAI_LOCAL_XCODE_SDK_PATH"
-fi
+export MIRAI_LOCAL_XCODE_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
 
-export MIRAI_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
+# remove sdk floder?
+#if [ -d "$MIRAI_LOCAL_XCODE_SDK_PATH" ]; then
+#	rm -r "$MIRAI_LOCAL_XCODE_SDK_PATH"
+#fi
+
 cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural" "$MIRAI_LOCAL_XCODE_SDK_PATH"
-ln -s  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_SDK_PREFIX"
+ln -sfh  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_LOCAL_XCODE_SDK_PREFIX"
 
 # xcode integration
 $SCRIPT_ROOT/Xcode_Integration/install.sh

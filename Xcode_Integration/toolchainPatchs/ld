@@ -23,11 +23,13 @@ done
 finalCommand=${finalCommand//" -dynamiclib "/" -shared "}
 
 finalCommand=${finalCommand//" -framework UIKit "/" -lUIKit "}
-finalCommand=${finalCommand//" -framework CoreGraphics "/" -lopal "}
+finalCommand=${finalCommand//" -framework CoreGraphics "/" -lCoreGraphics "}
 finalCommand=${finalCommand//" -framework Foundation "/" -lgnustep-base "}
 finalCommand=${finalCommand//" -framework QuartzCore "/" -lQuartzCore "}
 finalCommand=${finalCommand//" -framework CoreFoundation "/" -lgnustep-corebase "}
-finalCommand=${finalCommand//" -framework CoreText "/" -lopal "}
+finalCommand=${finalCommand//" -framework CoreText "/" -lCoreText "}
+finalCommand=${finalCommand//" -framework OpenGLES "/" -lOpenGLES "}
+finalCommand=${finalCommand//" -framework MediaPlayer "/" -lMediaPlayer "}
 
 # temp hack, remove link gcc
 #finalCommand=${finalCommand//"-lgcc"/""}

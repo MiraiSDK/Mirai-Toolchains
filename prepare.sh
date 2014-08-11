@@ -98,8 +98,7 @@ if [ ! -d $STANDALONE_TOOLCHAIN_PATH ]; then
 	cp $ANDROID_NDK_PATH/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.8/libgcc.a $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/
 	
 	pushd $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib
-	# link libcxxrt.so
-	ln -sf libgnustl_shared.so libcxxrt.so
+
 	popd
 fi
 
@@ -286,6 +285,7 @@ fi
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreText
 	./toolchain_build.sh
+	checkError $? "build CoreText failed"
 	popd
 fi
 

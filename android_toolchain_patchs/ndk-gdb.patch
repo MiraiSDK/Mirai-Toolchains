@@ -1,0 +1,31 @@
+--- ndk-gdb	2014-08-11 14:41:00.000000000 +0800
++++ ndk-gdb	2014-08-11 23:08:24.000000000 +0800
+@@ -615,6 +615,8 @@
+ 
+ # Find the <dataDir> of the package on the device
+ adb_var_shell2 DATA_DIR run-as $PACKAGE_NAME /system/bin/sh -c pwd
++# HACK: hard-code package path
++DATA_DIR="/data/data/$PACKAGE_NAME"
+ if [ $? != 0 -o -z "$DATA_DIR" ] ; then
+     echo "ERROR: Could not extract package's data directory. Are you sure that"
+     echo "       your installed application is debuggable?"
+@@ -689,7 +691,9 @@
+ 
+ # Launch gdbserver now
+ DEBUG_SOCKET=debug-socket
+-run adb_cmd shell run-as $PACKAGE_NAME lib/gdbserver +$DEBUG_SOCKET --attach $PID &
++#run adb_cmd shell run-as $PACKAGE_NAME lib/gdbserver +$DEBUG_SOCKET --attach $PID &
++run adb_cmd shell $DATA_DIR/lib/gdbserver :$DEBUG_PORT --attach $PID &
++
+ if [ $? != 0 ] ; then
+     echo "ERROR: Could not launch gdbserver on the device?"
+     exit 1
+@@ -698,7 +702,7 @@
+ 
+ # Setup network redirection
+ log "Setup network redirection"
+-run adb_cmd forward tcp:$DEBUG_PORT localfilesystem:$DATA_DIR/$DEBUG_SOCKET
++run adb_cmd forward tcp:$DEBUG_PORT tcp:$DEBUG_PORT
+ if [ $? != 0 ] ; then
+     echo "ERROR: Could not setup network redirection to gdbserver?"
+     echo "       Maybe using --port=<port> to use a different TCP port might help?"

@@ -77,6 +77,11 @@ if [ ! -d $ANDROID_NDK_PATH ]; then
 	
 	tar -xvyf android-ndk-r9b-darwin-x86_64.tar.bz2
 	
+	#patch 
+	pushd $ANDROID_NDK_PATH
+		patch -p0 < $SCRIPT_ROOT/android_toolchain_patchs/ndk-gdb.patch
+	popd
+	
 	if [ -d $ANDROID_NDK_PATH ]; then
 		rm android-ndk-r9b-darwin-x86_64.tar.bz2
 	fi

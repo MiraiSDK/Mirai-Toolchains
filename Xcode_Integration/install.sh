@@ -46,16 +46,4 @@ mkdir -p ~/Library/Application\ Support/Developer/Shared/Xcode/Specifications/
 echo "$generated" > ~/Library/Application\ Support/Developer/Shared/Xcode/Specifications/android-clang-3.3.pbcompspec
 
 
-if [[ "$MIRAI_LOCAL_XCODE_SDK_PATH" == "" ]]; then
-	echo "env not setted: MIRAI_LOCAL_XCODE_SDK_PATH: $MIRAI_LOCAL_XCODE_SDK_PATH"
-	exit 1
-fi
-
-#link 
-pushd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-echo "Attemp to Link fake sdk to Xcode..."
-echo "This operation needs sudo privilege"
-sudo ln -sf "$MIRAI_LOCAL_XCODE_SDK_PATH"
-popd
-
 

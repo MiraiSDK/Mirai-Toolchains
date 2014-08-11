@@ -22,18 +22,18 @@ export MIRAI_SDK_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/MacO
 export MIRAI_SDK_PREFIX="$MIRAI_SDK_PATH/usr"
 export MIRAI_SDK_PKG_CONFIG_PATH="$MIRAI_SDK_PREFIX/lib/pkgconfig"
 
+export MIRAI_LOCAL_XCODE_SDK_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18.sdk"
+export MIRAI_LOCAL_XCODE_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
+
 export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-arm"
 export GNUSTEP_MAKE_CONFIG_PATH="$SCRIPT_ROOT/gnu-config"
 export SYSROOTFLAGS_ARM="--sysroot $MIRAI_SDK_PATH"
 
 export CLANG_ARM=arm-linux-androideabi-clang
 export CLANGPP_ARM=arm-linux-androideabi-clang++
-
 export GCC_ARM=arm-linux-androideabi-gcc
 export LD_ARM=arm-linux-androideabi-ld
-
 export GXX_ARM=arm-linux-androideabi-g++
-
 export AR_ARM=arm-linux-androideabi-ar
 export RANLIB_ARM=arm-linux-androideabi-ranlib
 export OBJDUMP_ARM=arm-linux-androideabi-objdump
@@ -45,6 +45,21 @@ checkError()
         exit ${1}
     fi
 }
+
+#0. link between Xcode SDK and Mirai SDK
+#	we do this at beginning because this step needs sudo privilege
+#	and the whole build time is so long, we don't want waiting the script pause at mid-time, and ask your passcode
+if [[ "$MIRAI_LOCAL_XCODE_SDK_PATH" == "" ]]; then
+	echo "env not setted: MIRAI_LOCAL_XCODE_SDK_PATH: $MIRAI_LOCAL_XCODE_SDK_PATH"
+	exit 1
+fi
+
+#link 
+pushd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+echo "Attemp to Link fake sdk to Xcode..."
+echo "This operation needs sudo privilege"
+sudo ln -sf "$MIRAI_LOCAL_XCODE_SDK_PATH"
+popd
 
 #1. get Android NDK
 mkdir -p $MIRAI_PRODUCTS_ANDROID_PATH
@@ -107,15 +122,16 @@ export PATH=$PATH:$STANDALONE_TOOLCHAIN_PATH/bin # Add Android toolchain to PATH
 
 #3. link sdk path
 echo "prepare xcode sdk..."
-export MIRAI_LOCAL_XCODE_SDK_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18.sdk"
-export MIRAI_LOCAL_XCODE_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
 
-# remove sdk floder?
+# remove sdk floder if exist?
 #if [ -d "$MIRAI_LOCAL_XCODE_SDK_PATH" ]; then
 #	rm -r "$MIRAI_LOCAL_XCODE_SDK_PATH"
 #fi
 
+# copy Xcode SDK directory structural
 cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural" "$MIRAI_LOCAL_XCODE_SDK_PATH"
+
+# link  between android-toolchain an mirai-toolchiain
 ln -sfh  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_LOCAL_XCODE_SDK_PREFIX"
 
 # xcode integration

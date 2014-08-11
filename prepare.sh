@@ -353,3 +353,21 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ]; then
 	popd
 fi
 
+#Print Successful Message
+echo ""
+echo ""
+echo "###################### Build Successful ######################"
+echo "Some useful information:"
+echo ""
+echo "  MIRAI_SDK_PATH: 	$MIRAI_SDK_PATH"
+echo "ANDROID_NDK_PATH: 	$ANDROID_NDK_PATH"
+echo "ANDROID_JDK_PATH: 	$ANDROID_JDK_PATH"
+echo ""
+echo "To use android toolchain in shell, add below path to your PATH env"
+echo ""
+echo "	$ANDROID_JDK_PATH/tools"
+echo "	$ANDROID_JDK_PATH/platform-tools"
+echo "	$ANDROID_NDK_PATH"
+echo "	$STANDALONE_TOOLCHAIN_PATH/bin"
+echo ""
+

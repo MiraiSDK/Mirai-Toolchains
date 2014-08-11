@@ -20,6 +20,7 @@ fi
 
 export MIRAI_SDK_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/Android18.sdk"
 export MIRAI_SDK_PREFIX="$MIRAI_SDK_PATH/usr"
+export MIRAI_SDK_PKG_CONFIG_PATH="$MIRAI_SDK_PREFIX/lib/pkgconfig"
 
 export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-arm"
 export GNUSTEP_MAKE_CONFIG_PATH="$SCRIPT_ROOT/gnu-config"

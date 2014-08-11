@@ -18,6 +18,10 @@ build_opengcd()
 	
 		patch -p0 -i ../libkqueue_signal.patch
 		patch -p0 -i ../libkqueue_makefile.patch
+		
+		pushd libkqueue
+		autoreconf -fvi
+		popd
 	
 		pushd libdispatch
 	    patch -p0 < ../patch/dispatch-workaround.diff 
@@ -30,29 +34,35 @@ build_opengcd()
 		autoconf
 		popd
 	
-		./autogen.sh
 		popd
 	fi
 
 	pushd opengcd
 	
 	if [ ! -f $MIRAI_SDK_PREFIX/lib/libBlocksRuntime.a ]; then
+		# we use gcc here
+		# libkqueue use TLS, use clang to build will cause symbol undefined at link time, because android donesn't support TLS
+		# gcc provided a emulation TLS layer for platform that doesn't support TLS
+		CFLAGS="-DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-gcc ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
+		checkError $? "configure dispatch dependencies failed"
 
-	CFLAGS="-DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
-
-	make
-	checkError $? "build dispatch dependencies failed"
+		make
+		checkError $? "build dispatch dependencies failed"
 	
-	make install	
+		make install	
 	fi
 
 	pushd libdispatch
-	CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX
-	make 
-	make install
-	checkError $? "build libdispatch failed"
-	popd
+	PKG_CONFIG_PATH=$MIRAI_SDK_PKG_CONFIG_PATH CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang \
+	LDFLAGS="-Wl,-z,defs -lgnustl_shared" \
+	./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX
+	checkError $? "configure libdispatch failed"
 	
+	make 
+	checkError $? "build libdispatch failed"
+	
+	make install
+	popd
 	
 	popd
 	

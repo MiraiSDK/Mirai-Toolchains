@@ -31,11 +31,6 @@ finalCommand=${finalCommand//" -framework CoreText "/" -lCoreText "}
 finalCommand=${finalCommand//" -framework OpenGLES "/" -lOpenGLES "}
 finalCommand=${finalCommand//" -framework MediaPlayer "/" -lMediaPlayer "}
 
-# clang will convert -pthread to -lphread
-# android support pthread but it's part of libc, there is no exist a file libpthread.so
-# we just replace it with -lc
-# remove this hack if a newer version of clang fixed this bug.
-finalCommand=${finalCommand//" -lpthread "/" -lc "}
 
 echo "final command: $finalCommand"
 `dirname $0`/realld $finalCommand

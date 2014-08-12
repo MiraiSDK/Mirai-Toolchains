@@ -31,7 +31,7 @@ buildPixman()
 	if [ ! -d pixman-0.32.4 ]; then
 		if [ ! -f pixman-0.32.4.tar.gz ]; then
 			echo "Download pixman..."
-			curl http://cairographics.org/releases/pixman-0.32.4.tar.gz -o pixman-0.32.4.tar.gz
+			curl -O http://cairographics.org/releases/pixman-0.32.4.tar.gz
 		fi
 		tar -xvf pixman-0.32.4.tar.gz
 	fi
@@ -64,7 +64,7 @@ buildCairo()
 {
 	if [ ! -d cairo-1.12.14 ]; then
 		if [ ! -f cairo-1.12.14.tar.xz ]; then
-			curl http://cairographics.org/releases/cairo-1.12.14.tar.xz -o cairo-1.12.14.tar.xz
+			curl -O http://cairographics.org/releases/cairo-1.12.14.tar.xz
 		fi
 		tar -xJf cairo-1.12.14.tar.xz
 		

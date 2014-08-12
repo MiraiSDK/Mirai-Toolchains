@@ -79,7 +79,7 @@ if [ ! -d $ANDROID_NDK_PATH ]; then
 	
 	if [ ! -f android-ndk-r9b-darwin-x86_64.tar.bz2 ]; then
 		echo "Downloadng Android NDK..."
-		curl http://dl.google.com/android/ndk/android-ndk-r9b-darwin-x86_64.tar.bz2 -o android-ndk-r9b-darwin-x86_64.tar.bz2
+		curl -O http://dl.google.com/android/ndk/android-ndk-r9b-darwin-x86_64.tar.bz2
 	fi
 	
 	tar -xvyf android-ndk-r9b-darwin-x86_64.tar.bz2
@@ -102,7 +102,7 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	echo "Missing Android SDK, will download it, if you already has Android SDK, please set it to environment: ANDROID_JDK_PATH"
 	if [ ! -f adt-bundle-mac-x86_64-20131030.zip ]; then
 		echo "Downloadng Android SDK adt-bundle-mac-x86_64-20131030.zip..."
-		curl http://dl.google.com/android/adt/adt-bundle-mac-x86_64-20131030.zip -o adt-bundle-mac-x86_64-20131030.zip
+		curl -O http://dl.google.com/android/adt/adt-bundle-mac-x86_64-20131030.zip
 	fi
 	
 	tar -vxzf adt-bundle-mac-x86_64-20131030.zip
@@ -157,7 +157,7 @@ buildGNUstepMake()
 
     if [ ! -f gnustep-make-2.6.2.tar.gz ]; then
 		echo "Downloadng gnustep-make-2.6.2..."
-        curl ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-make-2.6.2.tar.gz > gnustep-make-2.6.2.tar.gz
+        curl -O ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-make-2.6.2.tar.gz
 		checkError $? "Download gnustep-make failed"
 		
     fi

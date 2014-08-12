@@ -22,7 +22,7 @@ buildLibPNG()
 	if [ ! -d libpng-$LIB_PNG_VERSION ]; then
 		if [ ! -f libpng-$LIB_PNG_VERSION.tar.gz ]; then
 			echo "Download libpng..."
-			curl ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-$LIB_PNG_VERSION.tar.gz -o libpng-$LIB_PNG_VERSION.tar.gz
+			curl -O ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-$LIB_PNG_VERSION.tar.gz
 		fi
 		tar -xvf libpng-$LIB_PNG_VERSION.tar.gz
 	fi
@@ -50,7 +50,7 @@ buildLibJPEG()
 	if [ ! -d libjpeg-turbo-1.3.0 ]; then
 		if [ ! -f libjpeg-turbo-1.3.0.tar.gz ]; then
 			echo "Download libjpeg-turbo..."
-			curl http://heanet.dl.sourceforge.net/project/libjpeg-turbo/1.3.0/libjpeg-turbo-1.3.0.tar.gz -o libjpeg-turbo-1.3.0.tar.gz
+			curl -O http://heanet.dl.sourceforge.net/project/libjpeg-turbo/1.3.0/libjpeg-turbo-1.3.0.tar.gz
 		fi
 		tar -xvf libjpeg-turbo-1.3.0.tar.gz
 		
@@ -79,7 +79,7 @@ buildLibTIFF()
 	if [ ! -d tiff-4.0.3 ]; then
 		if [ ! -f tiff-4.0.3.tar.gz ]; then
 			echo "Download tiff..."
-			curl http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz -o tiff-4.0.3.tar.gz
+			curl -O http://download.osgeo.org/libtiff/tiff-4.0.3.tar.gz
 		fi
 		tar -xvf tiff-4.0.3.tar.gz
 		cp $GNUSTEP_MAKE_CONFIG_PATH/config.sub tiff-4.0.3/config/config.sub
@@ -107,7 +107,7 @@ buildFreetype()
 {
 	if [ ! -d freetype-2.5.1 ]; then
 		if [ ! -f freetype-2.5.1.tar.gz ]; then
-			curl http://ftp.twaren.net/Unix/NonGNU//freetype/freetype-2.5.1.tar.gz -o freetype-2.5.1.tar.gz
+			curl -O http://ftp.twaren.net/Unix/NonGNU//freetype/freetype-2.5.1.tar.gz
 		fi
 		tar -xvf freetype-2.5.1.tar.gz
 	fi
@@ -160,7 +160,7 @@ buildExpat()
 {
 	if [ ! -d expat-2.1.0 ]; then
 		if [ ! -f expat-2.1.0.tar.gz ]; then
-			curl http://heanet.dl.sourceforge.net/project/expat/expat/2.1.0/expat-2.1.0.tar.gz -o expat-2.1.0.tar.gz
+			curl -O http://heanet.dl.sourceforge.net/project/expat/expat/2.1.0/expat-2.1.0.tar.gz
 		fi
 		
 		tar -xvf expat-2.1.0.tar.gz
@@ -186,7 +186,7 @@ buildLCMS()
 {
 	if [ ! -d lcms-1.19 ]; then
 		if [ ! -f lcms-1.19.tar.gz ]; then
-			curl http://heanet.dl.sourceforge.net/project/lcms/lcms/1.19/lcms-1.19.tar.gz -o lcms-1.19.tar.gz 
+			curl -O http://heanet.dl.sourceforge.net/project/lcms/lcms/1.19/lcms-1.19.tar.gz
 		fi
 		
 		tar -xvf lcms-1.19.tar.gz

@@ -15,7 +15,7 @@ buildLibiconv()
 	if [ ! -d libiconv-1.14 ]; then
 		if [ ! -f libiconv-1.14.tar.gz ]; then
 			echo "Downloading libiconv-1.14.tar.gz..."
-			curl http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz -o libiconv-1.14.tar.gz
+			curl -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 		fi
 		tar -xvf libiconv-1.14.tar.gz
 	fi

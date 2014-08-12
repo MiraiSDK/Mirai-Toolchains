@@ -23,17 +23,6 @@ build_opengcd()
 		autoreconf -fvi
 		popd
 	
-		pushd libdispatch
-	    patch -p0 < ../patch/dispatch-workaround.diff 
-	    patch -p0 < ../patch/dispatch-spawn.diff
-		patch -p0 < ../../dispatch_disable_test.patch
-		
-		autoreconf -fvi
-		
-	    patch -p1 < ../../libtool_android_version.patch
-		autoconf
-		popd
-	
 		popd
 	fi
 
@@ -52,6 +41,22 @@ build_opengcd()
 		make install	
 	fi
 
+	if [ ! -f libdispatch_patched ]; then
+		pushd libdispatch
+	    patch -p0 < ../patch/dispatch-workaround.diff 
+	    patch -p0 < ../patch/dispatch-spawn.diff
+		patch -p0 < ../../dispatch_disable_test.patch
+	
+		autoreconf -fvi
+	
+	    patch -p1 < ../../libtool_android_version.patch
+		autoconf
+		popd
+		
+		touch libdispatch_patched
+	fi
+
+	
 	pushd libdispatch
 	PKG_CONFIG_PATH=$MIRAI_SDK_PKG_CONFIG_PATH CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang \
 	LDFLAGS="-Wl,-z,defs -lgnustl_shared" \

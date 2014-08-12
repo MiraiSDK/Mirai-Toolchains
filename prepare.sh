@@ -1,11 +1,13 @@
 #!/bin/sh
 
+set -e
+
 pushd `pwd`/`dirname $0`
 SCRIPT_ROOT=`pwd`
 popd
 
 pushd ..
-MIRAI_PROJECT_ROOT_PATH=`pwd`
+export MIRAI_PROJECT_ROOT_PATH=`pwd`
 popd
 
 export MIRAI_TOOLCHAIN_ANDROID_PATH="$MIRAI_PROJECT_ROOT_PATH/toolchain/android"
@@ -55,11 +57,13 @@ if [[ "$MIRAI_LOCAL_XCODE_SDK_PATH" == "" ]]; then
 fi
 
 #link 
+if [ ! -d $MIRAI_SDK_PATH ]; then
 pushd /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
 echo "Attemp to Link fake sdk to Xcode..."
 echo "This operation needs sudo privilege"
 sudo ln -sf "$MIRAI_LOCAL_XCODE_SDK_PATH"
 popd
+fi
 
 #1. get Android NDK
 mkdir -p $MIRAI_PRODUCTS_ANDROID_PATH
@@ -151,8 +155,12 @@ buildGNUstepMake()
     if [ ! -f gnustep-make-2.6.2.tar.gz ]; then
 		echo "Downloadng gnustep-make-2.6.2..."
         curl ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-make-2.6.2.tar.gz > gnustep-make-2.6.2.tar.gz
+		checkError $? "Download gnustep-make failed"
+		
     fi
     tar -xzf gnustep-make-2.6.2.tar.gz
+	checkError $? "extract gnustep-make failed"
+	
 
     cp $GNUSTEP_MAKE_CONFIG_PATH/config.sub gnustep-make-2.6.2
     cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess gnustep-make-2.6.2

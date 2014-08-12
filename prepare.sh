@@ -31,6 +31,9 @@ export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchai
 export GNUSTEP_MAKE_CONFIG_PATH="$SCRIPT_ROOT/gnu-config"
 export SYSROOTFLAGS_ARM="--sysroot $MIRAI_SDK_PATH"
 
+export PKG_CONFIG_LIBDIR=$MIRAI_SDK_PREFIX/lib/pkgconfig
+export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
+
 export CLANG_ARM=arm-linux-androideabi-clang
 export CLANGPP_ARM=arm-linux-androideabi-clang++
 export GCC_ARM=arm-linux-androideabi-gcc

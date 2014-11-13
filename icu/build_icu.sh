@@ -62,11 +62,11 @@ buildAndroidVersion()
 	# required BREAK_ITERATION (-DUCONFIG_NO_BREAK_ITERATION = 0)
 	# required COLLATION (-DUCONFIG_NO_COLLATION=0)
 	#
-	export CPPFLAGS="-I$MIRAI_SDK_PREFIX/include/ \
+	export CPPFLAGS="$ARCHFLAGS -I$MIRAI_SDK_PREFIX/include/ \
 	-fno-short-wchar -DU_USING_ICU_NAMESPACE=0 -fno-short-enums \
 	-DU_HAVE_NL_LANGINFO_CODESET=0 -D__STDC_INT64__ -DU_TIMEZONE=1 \
 	-DUCONFIG_NO_LEGACY_CONVERSION=1 -DUCONFIG_NO_TRANSLITERATION=0"
-	export LDFLAGS="-lc -lgnustl_shared -Wl,-rpath-link=$MIRAI_SDK_PREFIX/lib/"
+	export LDFLAGS="$ARCHLDFLAGS -lc -lgnustl_shared -Wl,-rpath-link=$MIRAI_SDK_PREFIX/lib/"
 
 	../icu/source/configure --with-cross-build=$ICU_CROSS_BUILD \
 	--enable-extras=no --enable-strict=no -enable-static --disable-shared \

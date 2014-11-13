@@ -32,7 +32,7 @@ build_opengcd()
 		# we use gcc here
 		# libkqueue use TLS, use clang to build will cause symbol undefined at link time, because android donesn't support TLS
 		# gcc provided a emulation TLS layer for platform that doesn't support TLS
-		CFLAGS="-DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-gcc ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
+		CFLAGS="-DHAVE_SYS_EVENTFD_H=1 $ARCHFLAGS" CC=arm-linux-androideabi-gcc ./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX -enable-shared=no
 		checkError $? "configure dispatch dependencies failed"
 
 		make
@@ -58,7 +58,7 @@ build_opengcd()
 
 	
 	pushd libdispatch
-	PKG_CONFIG_PATH=$MIRAI_SDK_PKG_CONFIG_PATH CFLAGS="-DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang \
+	PKG_CONFIG_PATH=$MIRAI_SDK_PKG_CONFIG_PATH CFLAGS="$ARCHFLAGS -DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=arm-linux-androideabi-clang \
 	LDFLAGS="-Wl,-z,defs -lgnustl_shared" \
 	./configure --host=arm-linux-androideabi --prefix=$MIRAI_SDK_PREFIX
 	checkError $? "configure libdispatch failed"

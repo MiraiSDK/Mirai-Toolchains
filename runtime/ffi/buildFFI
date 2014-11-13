@@ -34,7 +34,7 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libffi.a ]; then
     pushd libffi
 
 
-    CC="$CLANG_ARM" CXX="$CLANGPP_ARM" CPPFLAGS="$SYSROOTFLAGS_ARM" CFLAGS="$SYSROOTFLAGS_ARM" AR="$AR_ARM" OBJDUMP="$OBJDUMP_ARM" RANLIB="$RANLIB_ARM" ./configure --prefix=$MIRAI_SDK_PREFIX --host="arm-linux-androideabi" --with-sysroot=$MIRAI_SDK_PATH --disable-shared
+    CC="$CLANG_ARM" CXX="$CLANGPP_ARM" CPPFLAGS="$ARCHFLAGS $SYSROOTFLAGS_ARM" CFLAGS="$ARCHFLAGS $SYSROOTFLAGS_ARM" AR="$AR_ARM" OBJDUMP="$OBJDUMP_ARM" RANLIB="$RANLIB_ARM" ./configure --prefix=$MIRAI_SDK_PREFIX --host="arm-linux-androideabi" --with-sysroot=$MIRAI_SDK_PATH --disable-shared
 
     checkError $? "configure libffi failed"
 

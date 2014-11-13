@@ -17,7 +17,7 @@ buildLibPNG()
 {
 	# change version to newest if download failed.
 	# http://www.libpng.org/pub/png/libpng.html
-	LIB_PNG_VERSION=1.6.12
+	LIB_PNG_VERSION=1.6.14
 	
 	if [ ! -d libpng-$LIB_PNG_VERSION ]; then
 		if [ ! -f libpng-$LIB_PNG_VERSION.tar.gz ]; then
@@ -29,7 +29,7 @@ buildLibPNG()
 
 	pushd libpng-$LIB_PNG_VERSION
 
-	FLAGS="--sysroot $MIRAI_SDK_PATH"
+	FLAGS="$ARCHFLAGS --sysroot $MIRAI_SDK_PATH"
 
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar CPPFLAGS="$FLAGS" CFLAGS="$FLAGS" \
 		./configure --host=arm-linux-androideabi --prefix=$PREFIX
@@ -61,7 +61,7 @@ buildLibJPEG()
 	pushd libjpeg-turbo-1.3.0
 
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-		 ./configure --host=arm-linux-androideabi --prefix=$PREFIX
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX
 	make -j4
 	checkError $? "Make libjpeg failed"
 	
@@ -89,7 +89,7 @@ buildLibTIFF()
 	pushd tiff-4.0.3
 
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib  \
-		./configure --host=arm-linux-androideabi --prefix=$PREFIX
+	CFLAGS="$CFLAGS $ARCHFLAGS" CPPFLAGS="$CPPFLAGS $ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX --enable-shared=no
 	make -j4
 	checkError $? "Make libtiff failed"
 	
@@ -115,7 +115,7 @@ buildFreetype()
 	pushd freetype-2.5.1
 	
 	LIBPNG_CFLAGS="-I$PREFIX/include/libpng16" LIBPNG_LIBS="-L$PREFIX/lib -lpng16" \
-		./configure --host=arm-linux-androideabi --prefix=$PREFIX --without-zlib
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX --without-zlib
 	make -j4
 	checkError $? "Make free type failed"
 	
@@ -144,7 +144,7 @@ buildFontconfig()
 	pushd fontconfig
 
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib CFLAGS="-DANDROID" CPPFLAGS="-DANDROID"  ./configure --host=arm-linux-androideabi --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes #--with-cache-dir="/sdcard/.fccache"
+	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib CFLAGS="$ARCHFLAGS -DANDROID" CPPFLAGS="$ARCHFLAGS -DANDROID"  ./configure --host=arm-linux-androideabi --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes #--with-cache-dir="/sdcard/.fccache"
 	make -j4
 	checkError $? "Make fontconfig failed"
 	
@@ -169,7 +169,7 @@ buildExpat()
 	pushd expat-2.1.0
 
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-		 ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
 	make -j4
 	checkError $? "Make expat failed"
 	
@@ -201,9 +201,9 @@ buildLCMS()
 
 	pushd lcms-1.19
 
-	export CFLAGS="-DANDROID"
+	export CFLAGS="$ARCHFLAGS -DANDROID"
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-		 ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
+	CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
 	make -j4
 	checkError $? "Make lcms failed"
 	

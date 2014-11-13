@@ -42,6 +42,9 @@ export GXX_ARM=arm-linux-androideabi-g++
 export AR_ARM=arm-linux-androideabi-ar
 export RANLIB_ARM=arm-linux-androideabi-ranlib
 export OBJDUMP_ARM=arm-linux-androideabi-objdump
+export ARCHFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
+export ARCHLDFLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
+
 
 checkError()
 {

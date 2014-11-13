@@ -15,6 +15,7 @@ buildCPUFeature()
 {
 	if [ ! -f $MIRAI_SDK_PREFIX/lib/cpufeatures.a ]; then
 		pushd $ANDROID_NDK_PATH/sources/android/cpufeatures
+		export CFLAGS="$ARCHFLAGS"
 		$CLANG_ARM -c -o cpu-features.o cpu-features.c
 		$AR_ARM rcs cpufeatures.a cpu-features.o
 		mv cpufeatures.a $MIRAI_SDK_PREFIX/lib/
@@ -39,10 +40,10 @@ buildPixman()
 	pushd pixman-0.32.4
 
 	CPUFEATURES_INCLUDE=$ANDROID_NDK_PATH/sources/android/cpufeatures
-	FLAGS="--sysroot $MIRAI_SDK_PATH -I$CPUFEATURES_INCLUDE -DPIXMAN_NO_TLS"
+	FLAGS="$ARCHFLAGS --sysroot $MIRAI_SDK_PATH -I$CPUFEATURES_INCLUDE -DPIXMAN_NO_TLS"
 
 	CC="$CLANG_ARM" CXX="$CLANGPP_ARM" AR="$AR_ARM" RANLIB="$RANLIB_ARM" CPPFLAGS="$FLAGS" \
-	CFLAGS="$FLAGS" LDFLAGS="-l$MIRAI_SDK_PREFIX/lib/cpufeatures.a" \
+	CFLAGS="$FLAGS" LDFLAGS="$ARCHLDFLAGS -l$MIRAI_SDK_PREFIX/lib/cpufeatures.a" \
 	PNG_CFLAGS="-I$MIRAI_SDK_PREFIX/include" PNG_LIBS="-L$MIRAI_SDK_PREFIX/lib -lpng" \
 	./configure --host=arm-linux-androideabi --prefix=$PREFIX
 	
@@ -77,7 +78,7 @@ buildCairo()
 	pushd cairo-1.12.14
 	export PKG_CONFIG_LIBDIR="$MIRAI_SDK_PREFIX/lib/pkgconfig:$MIRAI_SDK_PREFIX/share/pkgconfig"
 	export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
-	ARMCFLAGS="-DANDROID --sysroot $MIRAI_SDK_PATH -g"
+	ARMCFLAGS="$ARCHFLAGS -DANDROID --sysroot $MIRAI_SDK_PATH -g"
 	
 	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar \
 	CPPFLAGS="$ARMCFLAGS" CFLAGS="$ARMCFLAGS" ./configure --host=arm-linux-androideabi \

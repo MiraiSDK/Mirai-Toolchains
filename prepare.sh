@@ -2,6 +2,12 @@
 
 set -e
 
+## To avoid permission issues, user should not run this script as root
+if [[ $EUID -eq 0 ]]; then
+	echo "This script must not be run as root" 1>&2
+	exit 1
+fi
+
 pushd `pwd`/`dirname $0`
 SCRIPT_ROOT=`pwd`
 popd

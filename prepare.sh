@@ -12,7 +12,7 @@ pushd `pwd`/`dirname $0`
 SCRIPT_ROOT=`pwd`
 popd
 
-pushd ..
+pushd $SCRIPT_ROOT/..
 export MIRAI_PROJECT_ROOT_PATH=`pwd`
 popd
 

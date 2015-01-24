@@ -84,6 +84,8 @@
     [commands insertObject:@"set breakpoint pending on" atIndex:0];
     [commands addObject:@"b -[NSException raise]"];
     [commands addObject:@"set unwindonsignal on"];
+    [commands addObject:@"set pagination off"];
+    [commands addObject:@"c"];
     [commands addObject:@""];
     NSString *output = [commands componentsJoinedByString:@"\n"];
 
@@ -109,6 +111,7 @@ int main(int argc, const char * argv[])
         for (int i = 0; i<argc; i++) {
             [arguments addObject:[NSString stringWithUTF8String:argv[i]]];
         }
+        NSLog(@"%s arguments:%@",__PRETTY_FUNCTION__,arguments);
         
         ToolMain *main = [[ToolMain alloc] initWithArguments:arguments];
         [main main];

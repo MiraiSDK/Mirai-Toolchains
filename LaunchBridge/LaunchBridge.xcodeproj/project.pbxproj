@@ -7,25 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		437F26021A73EB4F00FBE3E2 /* LaunchBridge.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 43ED583618DC24CE00FA59B2 /* LaunchBridge.1 */; };
+		437F26041A73EB7800FBE3E2 /* LaunchBridge in CopyFiles */ = {isa = PBXBuildFile; fileRef = 43ED582C18DC24CE00FA59B2 /* LaunchBridge */; };
 		43ED583018DC24CE00FA59B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43ED582F18DC24CE00FA59B2 /* Foundation.framework */; };
 		43ED583318DC24CE00FA59B2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ED583218DC24CE00FA59B2 /* main.m */; };
-		43ED583718DC24CE00FA59B2 /* LaunchBridge.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 43ED583618DC24CE00FA59B2 /* LaunchBridge.1 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		437F26031A73EB5700FBE3E2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/local/bin;
+			dstSubfolderSpec = 0;
+			files = (
+				437F26041A73EB7800FBE3E2 /* LaunchBridge in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		43ED582A18DC24CE00FA59B2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				43ED583718DC24CE00FA59B2 /* LaunchBridge.1 in CopyFiles */,
+				437F26021A73EB4F00FBE3E2 /* LaunchBridge.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		437F25FD1A73A25A00FBE3E2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		43ED582C18DC24CE00FA59B2 /* LaunchBridge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LaunchBridge; sourceTree = BUILT_PRODUCTS_DIR; };
 		43ED582F18DC24CE00FA59B2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		43ED583218DC24CE00FA59B2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -83,6 +95,7 @@
 		43ED583418DC24CE00FA59B2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				437F25FD1A73A25A00FBE3E2 /* README.md */,
 				43ED583518DC24CE00FA59B2 /* LaunchBridge-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -98,6 +111,7 @@
 				43ED582818DC24CE00FA59B2 /* Sources */,
 				43ED582918DC24CE00FA59B2 /* Frameworks */,
 				43ED582A18DC24CE00FA59B2 /* CopyFiles */,
+				437F26031A73EB5700FBE3E2 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -253,6 +267,7 @@
 				43ED583C18DC24CE00FA59B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

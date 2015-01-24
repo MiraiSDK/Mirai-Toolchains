@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		437F26061A73EF4200FBE3E2 /* BreakPointsConvert in CopyFiles */ = {isa = PBXBuildFile; fileRef = 43ED57FF18DAA14600FA59B2 /* BreakPointsConvert */; };
 		43ED580318DAA14600FA59B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43ED580218DAA14600FA59B2 /* Foundation.framework */; };
 		43ED580618DAA14600FA59B2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ED580518DAA14600FA59B2 /* main.m */; };
 		43ED580A18DAA14600FA59B2 /* BreakPointsConvert.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 43ED580918DAA14600FA59B2 /* BreakPointsConvert.1 */; };
@@ -19,6 +20,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		437F26051A73EF2600FBE3E2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/local/bin;
+			dstSubfolderSpec = 0;
+			files = (
+				437F26061A73EF4200FBE3E2 /* BreakPointsConvert in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		43ED57FD18DAA14600FA59B2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,6 +139,7 @@
 				43ED57FB18DAA14600FA59B2 /* Sources */,
 				43ED57FC18DAA14600FA59B2 /* Frameworks */,
 				43ED57FD18DAA14600FA59B2 /* CopyFiles */,
+				437F26051A73EF2600FBE3E2 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -289,6 +301,7 @@
 				43ED580F18DAA14600FA59B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

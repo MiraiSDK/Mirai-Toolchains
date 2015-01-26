@@ -2,11 +2,17 @@
 
 set -e
 
+## To avoid permission issues, user should not run this script as root
+if [[ $EUID -eq 0 ]]; then
+	echo "This script must not be run as root" 1>&2
+	exit 1
+fi
+
 pushd `pwd`/`dirname $0`
 SCRIPT_ROOT=`pwd`
 popd
 
-pushd ..
+pushd $SCRIPT_ROOT/..
 export MIRAI_PROJECT_ROOT_PATH=`pwd`
 popd
 
@@ -45,6 +51,26 @@ export OBJDUMP_ARM=arm-linux-androideabi-objdump
 export ARCHFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
 export ARCHLDFLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
 
+
+#### check tools required ###
+
+function checkToolExists
+{
+	echo "check: $1"
+	set +e
+	TOOL_PATH=`which $1`
+	set -e
+	if [[ "$TOOL_PATH" == "" ]]; then
+		echo "ERROR: the tool $1 that required is not existed, please install it"
+		exit 1
+	fi
+}
+
+## check aclocal 
+checkToolExists "aclocal"
+
+## check ant
+checkToolExists "ant"
 
 checkError()
 {

@@ -45,5 +45,11 @@ generated=${template/ANDROID_CLANG_PATH/$ANDROID_CLANG_PATH}
 mkdir -p ~/Library/Application\ Support/Developer/Shared/Xcode/Specifications/
 echo "$generated" > ~/Library/Application\ Support/Developer/Shared/Xcode/Specifications/android-clang-3.3.pbcompspec
 
+#Xcode Templates
+echo "install templates...."
+pushd `dirname $0`
+sh install_templates.sh
+popd
+
 
 

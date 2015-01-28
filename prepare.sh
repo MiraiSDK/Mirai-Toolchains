@@ -178,6 +178,17 @@ ln -sfh  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_LOCAL_XCODE_SDK_PREFIX
 # xcode integration
 $SCRIPT_ROOT/Xcode_Integration/install.sh
 
+# helper tools
+pushd BreakPointsConvert
+xcodebuild
+rm -rf build
+popd
+
+pushd LaunchBridge
+xcodebuild
+rm -rf build
+popd
+
 #4. build gnustep-make
 buildGNUstepMake()
 {

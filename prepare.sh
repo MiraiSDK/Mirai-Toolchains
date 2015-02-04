@@ -169,6 +169,11 @@ echo "prepare xcode sdk..."
 #	rm -r "$MIRAI_LOCAL_XCODE_SDK_PATH"
 #fi
 
+#patch gdb.
+pushd $SCRIPT_ROOT/android_toolchain_patchs
+./patch_gdb.sh
+popd
+
 # copy Xcode SDK directory structural
 cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural" "$MIRAI_LOCAL_XCODE_SDK_PATH"
 

@@ -301,65 +301,72 @@ relpath()
 {
     s=$(cd ${1%%/};pwd); d=$(cd $2;pwd); while [ &quot;${d#$s/}&quot; == &quot;${d}&quot; ]
     do s=$(dirname $s);b=&quot;../${b}&quot;; done; echo ${b}${d#$s/}
-    }
+}
     
-    #setting PATH
-    PATH=$(bash -l -c &apos;echo $PATH&apos;)
+#setting PATH
+PATH=$(bash -l -c &apos;echo $PATH&apos;)
+
+echo &quot;current direct&quot;
+pwd
+
+TN_EXEC_PATH=&quot;$TARGET_BUILD_DIR/$EXECUTABLE_PATH&quot;
+echo $TN_EXEC_PATH
+
+#Temp Android Project Path
+TN_ANDROID_PROJECT_PATH=&quot;$TARGET_BUILD_DIR/android&quot;
+
+PRODUCT_IDENTIFIER=`/usr/libexec/PlistBuddy -c &quot;Print :CFBundleIdentifier&quot; $TARGET_BUILD_DIR/$INFOPLIST_PATH`
+echo $ROOT_PRODUCT_IDENTIFIER_PLIST
+
+if [[ ! -d $TN_ANDROID_PROJECT_PATH ]]; then
+mkdir -p $TN_ANDROID_PROJECT_PATH
+fi
+
+pushd $TN_ANDROID_PROJECT_PATH
+
+## create project if needs
+if [[ ! -f AndroidManifest.xml ]]; then
+android create project --target 1 --name $PRODUCT_NAME --path ./ --activity MainActivity --package $PRODUCT_IDENTIFIER
+mkdir -p jni
+
+
+# patch AndroidManifest.xml
+echo &quot;patching AndroidManifest.xml..&quot;
+cp &quot;$SRCROOT/$PRODUCT_NAME/AndroidManifest.xml&quot; ./
+
+# patch MainActivity.java
+java_dest=`find . -name MainActivity.java`
+cp &quot;$SRCROOT/$PRODUCT_NAME/MainActivity.java&quot; &quot;$java_dest&quot;
+
+# include CocoaActivity lib
+TN_CURRENT=`pwd`
+Relative_Library_Path=`relpath $TN_CURRENT /Users/chyhfj/Development/MiraiSDK/toolchain/android/Android18.sdk/System/Library/Frameworks/CocoaActivity`
+
+android update project --target 1 --path . --library $Relative_Library_Path
+
+#update app name
+sed -i .bak -e &quot;s/&gt;MainActivity&lt;/&gt;$PRODUCT_NAME&lt;/&quot; res/values/strings.xml
+rm res/values/strings.xml.bak
+
+fi
+
+#copy jni files
+echo &quot;coping jni files..&quot;
+cp &quot;$TN_EXEC_PATH&quot; &quot;jni/$EXECUTABLE_NAME.so&quot;
+cp &quot;$SRCROOT/$PRODUCT_NAME/Android.mk&quot; jni/
+
+#copy resources
+echo &quot;coping resources...&quot;
+mkdir -p assets
+cp -R &quot;$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/&quot; assets/
+
+#build ndk
+ndk-build
+
+# run if needs
     
-    echo &quot;current direct&quot;
-    pwd
-    
-    TN_EXEC_PATH=&quot;$TARGET_BUILD_DIR/$EXECUTABLE_PATH&quot;
-    echo $TN_EXEC_PATH
-    
-    #Temp Android Project Path
-    TN_ANDROID_PROJECT_PATH=&quot;$TARGET_BUILD_DIR/android&quot;
-    
-    PRODUCT_IDENTIFIER=`/usr/libexec/PlistBuddy -c &quot;Print :CFBundleIdentifier&quot; $TARGET_BUILD_DIR/$INFOPLIST_PATH`
-    echo $ROOT_PRODUCT_IDENTIFIER_PLIST
-    
-    if [[ ! -d $TN_ANDROID_PROJECT_PATH ]]; then
-    mkdir -p $TN_ANDROID_PROJECT_PATH
-    fi
-    
-    pushd $TN_ANDROID_PROJECT_PATH
-    
-    ## create project if needs
-    if [[ ! -f AndroidManifest.xml ]]; then
-    android create project --target 1 --name $PRODUCT_NAME --path ./ --activity MainActivity --package $PRODUCT_IDENTIFIER
-    mkdir -p jni
-    
-    
-    # patch AndroidManifest.xml
-    echo &quot;patching AndroidManifest.xml..&quot;
-    cp &quot;$SRCROOT/$PRODUCT_NAME/AndroidManifest.xml&quot; ./
-    
-    # patch MainActivity.java
-    java_dest=`find . -name MainActivity.java`
-    cp &quot;$SRCROOT/$PRODUCT_NAME/MainActivity.java&quot; &quot;$java_dest&quot;
-    
-    # include CocoaActivity lib
-    TN_CURRENT=`pwd`
-    Relative_Library_Path=`relpath $TN_CURRENT /Users/chyhfj/Development/MiraiSDK/toolchain/android/Android18.sdk/System/Library/Frameworks/CocoaActivity`
-    
-    android update project --target 1 --path . --library $Relative_Library_Path
-    
-    #update app name
-    sed -i .bak -e &quot;s/&gt;MainActivity&lt;/&gt;$PRODUCT_NAME&lt;/&quot; res/values/strings.xml
-    rm res/values/strings.xml.bak
-    
-    fi
-    
-    #copy jni files
-    cp &quot;$TN_EXEC_PATH&quot; &quot;jni/$EXECUTABLE_NAME.so&quot;
-    cp &quot;$SRCROOT/$PRODUCT_NAME/Android.mk&quot; jni/
-    
-    #build ndk
-    ndk-build
-    
-    # run if needs
-    
-    popd</string>
+popd
+</string>
 								</dict>
 							</array>
 							<key>BasedOn</key>

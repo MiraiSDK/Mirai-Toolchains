@@ -1,0 +1,10 @@
+--- ndk-gdb	2013-06-11 13:31:38.000000000 +0800
++++ ndk-gdb	2015-02-07 14:13:30.000000000 +0800
+@@ -564,6 +564,7 @@
+ log "Using gdb setup init: $GDBSETUP_INIT"
+ 
+ TOOLCHAIN_PREFIX=`get_build_var_for_abi TOOLCHAIN_PREFIX $COMPAT_ABI`
++TOOLCHAIN_PREFIX=`basename $TOOLCHAIN_PREFIX`
+ log "Using toolchain prefix: $TOOLCHAIN_PREFIX"
+ 
+ APP_OUT=`get_build_var_for_abi TARGET_OUT $COMPAT_ABI`

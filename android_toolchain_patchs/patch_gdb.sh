@@ -38,4 +38,9 @@ if [[ "$GDBVERSION" != "GNU gdb (GDB) 7.7" ]]; then
 	
 	build_gdb
 	
+	pushd $ANDROID_NDK_PATH
+	patch -Np0 < $SCRIPT_ROOT/android_toolchain_patchs/gdb_path.patch
+	popd
+	
+	
 fi

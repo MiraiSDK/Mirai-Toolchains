@@ -7,61 +7,57 @@
 //
 
 #import <Foundation/Foundation.h>
+#include <getopt.h>
 
 #import "TNBreakPoint.h"
 
-@interface ToolMain : NSObject
+//
+// BreakPointsConvert input [-o output]
+//
+//
+struct globalArgs_t {
+    const char *outFileName;    /* -o option */
+    int verbosity;              /* -v option */
+    const char *inputFileName;
 
-@property (nonatomic, readonly, copy) NSArray *arguments;
-@property (nonatomic, readonly, strong) NSString *executableName;
+} globalArgs;
 
-- (id)initWithArguments:(NSArray *)arguments;
+static const char *optString = "o:vh?";
 
-
-@end
-@implementation ToolMain
-- (id)initWithArguments:(NSArray *)arguments;
+static struct option long_options[] =
 {
-    self = [super init];
-    if (self) {
-        _arguments = [arguments copy];
-        
-        _executableName = [_arguments[0] lastPathComponent];
-    }
-    return self;
+    {"verbose", no_argument,        NULL,  'v'},
+    {"output",  required_argument,  NULL,  'o'},
+    {"help",    no_argument,        NULL,  'h'},
+    {NULL,      no_argument,        NULL,   0 }
+};
+
+void display_usage()
+{
+    printf("usage: BreakPointsConvert [input file] [-o outputfile]\n");
 }
 
-- (void)main
+NSArray *breakpointsFromPath(NSString *path)
 {
-    if (_arguments.count != 3) {
-        [self printHelp];
-        return;
+    if (!path) {
+        return @[];
     }
     
-
-    NSString *inputPath = _arguments[1];
-    if (![inputPath isAbsolutePath]) {
-        inputPath = [[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:inputPath];
+    NSString *absolutePath = path;
+    if (![path isAbsolutePath]) {
+        absolutePath = [[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:path];
     }
-    
-    NSString *outputPath = _arguments[2];
-    if (![outputPath isAbsolutePath]) {
-        outputPath = [[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:outputPath];
-    }
-    
-    NSLog(@"process input:%@ output:%@",inputPath,outputPath);
     
     //load input file
-    if (![[NSFileManager defaultManager] fileExistsAtPath:inputPath]) {
-        NSLog(@"[Error]input file not exist.");
-        return;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:absolutePath]) {
+        return @[];
     }
     
     NSError *inputLoadError = nil;
-    NSString *input = [NSString stringWithContentsOfFile:inputPath encoding:NSUTF8StringEncoding error:&inputLoadError];
+    NSString *input = [NSString stringWithContentsOfFile:absolutePath encoding:NSUTF8StringEncoding error:&inputLoadError];
     if (inputLoadError) {
         NSLog(@"load input file failed: %@",inputLoadError);
-        return;
+        return @[];
     }
     
     NSError *xmlLoadingError = nil;
@@ -79,43 +75,96 @@
         [breakPoints addObject:bp];
     }
     
-    NSMutableArray *commands = [[breakPoints valueForKeyPath:@"gdbCommand"] mutableCopy];
-    [commands removeObject:@""];
-    [commands insertObject:@"set breakpoint pending on" atIndex:0];
-    [commands addObject:@"b -[NSException raise]"];
-    [commands addObject:@"set unwindonsignal on"];
-    [commands addObject:@"set pagination off"];
-    [commands addObject:@"c"];
-    [commands addObject:@""];
-    NSString *output = [commands componentsJoinedByString:@"\n"];
-
-    NSError *writingError = nil;
-    BOOL writeSuccess = [output writeToFile:outputPath atomically:YES encoding:NSUTF8StringEncoding error:&writingError];
-    if (!writeSuccess) {
-        NSLog(@"create output failed:%@",writingError);
-    }
-    
+    return breakPoints;
 }
-
-- (void)printHelp
-{
-    NSLog(@"usage: %@ [input file] [output file]",_executableName);
-}
-@end
 
 int main(int argc, const char * argv[])
 {
-
-    @autoreleasepool {
-        NSMutableArray *arguments = [NSMutableArray array];
-        for (int i = 0; i<argc; i++) {
-            [arguments addObject:[NSString stringWithUTF8String:argv[i]]];
-        }
-        NSLog(@"%s arguments:%@",__PRETTY_FUNCTION__,arguments);
+    globalArgs.verbosity = 0;
+    globalArgs.outFileName = NULL;
+    
+    int c;
+    while (1) {
+        int option_index = 0;
         
-        ToolMain *main = [[ToolMain alloc] initWithArguments:arguments];
-        [main main];
+        c = getopt_long(argc, argv, optString, long_options, &option_index);
+        
+        if (c== -1) {
+            break;
+        }
+        
+        switch (c) {
+            case 0:
+                
+                break;
+            case 'o':
+                globalArgs.outFileName = optarg;
+                break;
+            case 'v':
+                globalArgs.verbosity++;
+                break;
+            case 'h':
+            case '?':
+                display_usage();
+                return 0;
+                break;
+            default:
+                break;
+        }
     }
+    
+    globalArgs.inputFileName = *(argv + optind);
+    
+    if (globalArgs.verbosity) {
+        printf("input file:%s",globalArgs.inputFileName);
+    }
+    
+    @autoreleasepool {
+        
+        NSString *inputPath;
+        if (globalArgs.inputFileName) {
+            inputPath = [NSString stringWithUTF8String:globalArgs.inputFileName];
+        }
+        
+        
+        NSString *outputPath;
+        if (globalArgs.outFileName) {
+            outputPath = [NSString stringWithUTF8String:globalArgs.outFileName];
+            
+            if (![outputPath isAbsolutePath]) {
+                outputPath = [[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingPathComponent:outputPath];
+            }
+        }
+        
+        if (globalArgs.verbosity) {
+            NSLog(@"process input:%@ output:%@",inputPath,outputPath);
+        }
+        
+        
+        NSArray *breakPoints = breakpointsFromPath(inputPath);
+        
+        NSMutableArray *commands = [[breakPoints valueForKeyPath:@"gdbCommand"] mutableCopy];
+        [commands removeObject:@""];
+        [commands insertObject:@"set breakpoint pending on" atIndex:0];
+        [commands addObject:@"b -[NSException raise]"];
+        [commands addObject:@"set unwindonsignal on"];
+        [commands addObject:@"set pagination off"];
+        [commands addObject:@"c"];
+        [commands addObject:@""];
+        NSString *output = [commands componentsJoinedByString:@"\n"];
+        
+        if (outputPath) {
+            NSError *writingError = nil;
+            BOOL writeSuccess = [output writeToFile:outputPath atomically:YES encoding:NSUTF8StringEncoding error:&writingError];
+            if (!writeSuccess) {
+                NSLog(@"create output failed:%@",writingError);
+            }
+        } else {
+            printf("%s",output.UTF8String);
+        }
+
+    }
+    
     return 0;
 }
 

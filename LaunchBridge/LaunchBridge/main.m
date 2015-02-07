@@ -53,17 +53,20 @@ void perpareBreakpoints(NSString *targetProjectRoot, NSString *targetAndroid)
 {
     // search Breakpoints_v2.xcbkptlist
     NSString *xcbptlistFile = searchFileInPath(@"Breakpoints_v2.xcbkptlist", targetProjectRoot);
-    if (xcbptlistFile) {
-        NSTask *task = [[NSTask alloc] init];
-        [task setLaunchPath:gShellPath];
-        
-        NSString *gdbsetupFile = [targetAndroid stringByAppendingPathComponent:@"obj/local/armeabi/gdbbreakpoint.setup"];
-        NSString *command = [NSString stringWithFormat:@"BreakPointsConvert %@ %@",xcbptlistFile,gdbsetupFile];
-        
-        [task setArguments:@[@"-lc",command]];
-        [task launch];
-        [task waitUntilExit];
+    NSLog(@"xcbptlistFile:%@",xcbptlistFile);
+    if (xcbptlistFile == nil) {
+        xcbptlistFile = @"";
     }
+    
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath:gShellPath];
+    
+    NSString *gdbsetupFile = [targetAndroid stringByAppendingPathComponent:@"obj/local/armeabi/gdbbreakpoint.setup"];
+    NSString *command = [NSString stringWithFormat:@"BreakPointsConvert %@ -o %@",xcbptlistFile,gdbsetupFile];
+    
+    [task setArguments:@[@"-lc",command]];
+    [task launch];
+    [task waitUntilExit];
     
 }
 

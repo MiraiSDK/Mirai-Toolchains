@@ -335,13 +335,31 @@ echo &quot;patching AndroidManifest.xml..&quot;
 cp &quot;$SRCROOT/$PRODUCT_NAME/AndroidManifest.xml&quot; ./
 
 # patch MainActivity.java
+echo &quot;patching MainActivity.java..&quot;
 java_dest=`find . -name MainActivity.java`
 cp &quot;$SRCROOT/$PRODUCT_NAME/MainActivity.java&quot; &quot;$java_dest&quot;
 
 # include CocoaActivity lib
-TN_CURRENT=`pwd`
-Relative_Library_Path=`relpath $TN_CURRENT /Users/chyhfj/Development/MiraiSDK/toolchain/android/Android18.sdk/System/Library/Frameworks/CocoaActivity`
+    
+SDK_REAL_PATH=`readlink /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/Android18.sdk`
+    
+CocoaActivity_PATH=$SDK_REAL_PATH/System/Library/Frameworks/CocoaActivity
+    
+##check CocoaActivity exist
+    
+if [[ ! -d $CocoaActivity_PATH ]]; then
+    echo &quot;CocoaActivity doesn&apos;t exist. please build UIKIt first&quot;
+    ##clean
+    rm -rf $TN_ANDROID_PROJECT_PATH
+    exit 1
+fi
+    
+echo &quot;Resolving CocoaActivity relative path...&quot;
 
+TN_CURRENT=`pwd`
+Relative_Library_Path=`relpath $TN_CURRENT $CocoaActivity_PATH`
+
+echo &quot;add CocoaActivity as library...&quot;
 android update project --target 1 --path . --library $Relative_Library_Path
 
 #update app name

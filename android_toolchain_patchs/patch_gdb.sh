@@ -7,6 +7,14 @@ if [[ "$STANDALONE_TOOLCHAIN_PATH" == "" ]]; then
 	exit 1
 fi
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -rf android_toolchain_gdb
+	fi
+}
+
 build_gdb() 
 {
 	
@@ -22,11 +30,7 @@ build_gdb()
 
 	make install
 
-
 	popd
-	
-	#clean up
-	rm -rf android_toolchain_gdb
 }
 
 #check version
@@ -41,6 +45,6 @@ if [[ "$GDBVERSION" != "GNU gdb (GDB) 7.7" ]]; then
 	pushd $ANDROID_NDK_PATH
 	patch -Np0 < $SCRIPT_ROOT/android_toolchain_patchs/gdb_path.patch
 	popd
-	
-	
 fi
+
+cleanUp

@@ -10,6 +10,20 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up pixman
+		rm -r pixman-0.32.4
+		rm pixman-0.32.4.tar.gz
+	
+		#clean up cairo
+		rm -r cairo-1.12.14
+		rm cairo-1.12.14.tar.xz
+	
+	fi
+}
+
 # 1. Pixman
 buildCPUFeature()
 {
@@ -52,11 +66,7 @@ buildPixman()
 	
 	make install
 
-	popd
-	
-	#clean up
-	rm -r pixman-0.32.4
-	rm pixman-0.32.4.tar.gz
+	popd	
 }
 
 
@@ -88,10 +98,6 @@ buildCairo()
 	make install
 
 	popd
-	
-	#clean up
-	rm -r cairo-1.12.14
-	rm cairo-1.12.14.tar.xz
 }
 
 
@@ -107,3 +113,4 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/pkgconfig/glesv2.pc ]; then
 	cp glesv2.pc $MIRAI_SDK_PREFIX/lib/pkgconfig/glesv2.pc
 fi
 
+cleanUp

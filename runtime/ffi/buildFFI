@@ -8,6 +8,14 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -rf libffi
+	fi
+}
+
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libffi.a ]; then
     echo "Building libffi"
 
@@ -42,7 +50,6 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libffi.a ]; then
     checkError $? "Make install libffi failed"
 	
 	popd
-	
-	#clean up
-	rm -rf libffi
 fi
+
+cleanUp

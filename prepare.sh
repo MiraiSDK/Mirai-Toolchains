@@ -16,6 +16,9 @@ pushd $SCRIPT_ROOT/..
 export MIRAI_PROJECT_ROOT_PATH=`pwd`
 popd
 
+##should clean up
+export MIRAI_CLEAN_UP="no"
+
 export MIRAI_TOOLCHAIN_ANDROID_PATH="$MIRAI_PROJECT_ROOT_PATH/toolchain/android"
 export MIRAI_PRODUCTS_ANDROID_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH"
 
@@ -63,6 +66,25 @@ function checkToolExists
 	if [[ "$TOOL_PATH" == "" ]]; then
 		echo "ERROR: the tool $1 that required is not existed, please install it"
 		exit 1
+	fi
+}
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up ndk 
+		pushd $MIRAI_PRODUCTS_ANDROID_PATH
+			if [ -d $ANDROID_NDK_PATH ]; then
+				rm android-ndk-r9b-darwin-x86_64.tar.bz2
+			fi
+		popd
+		
+		#clean up jdk
+		pushd $MIRAI_PRODUCTS_ANDROID_PATH
+			rm adt-bundle-mac-x86_64-20131030.zip
+		popd
+		
+		#clean up
+		cleanupGNUstepMake
 	fi
 }
 
@@ -118,9 +140,7 @@ if [ ! -d $ANDROID_NDK_PATH ]; then
 		patch -p0 < $SCRIPT_ROOT/android_toolchain_patchs/ndk-gdb.patch
 	popd
 	
-	if [ -d $ANDROID_NDK_PATH ]; then
-		rm android-ndk-r9b-darwin-x86_64.tar.bz2
-	fi
+	
 	popd
 fi
 
@@ -135,9 +155,7 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	fi
 	
 	tar -vxzf adt-bundle-mac-x86_64-20131030.zip
-	if [ -d $ANDROID_JDK_PATH ]; then
-		rm adt-bundle-mac-x86_64-20131030.zip
-	else
+	if [ ! -d $ANDROID_JDK_PATH ]; then
 		echo "Missing Android SDK folder, take a look what's extracted folder name"
 		exit 1;
 	fi
@@ -261,7 +279,6 @@ echo "successful build objc runtime."
 #6. rebuild gnustep-make
 if grep USE_OBJC_EXCEPTIONS $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/config.make | grep no; then
 buildGNUstepMake
-cleanupGNUstepMake
 fi
 
 echo "start building Foundation..."

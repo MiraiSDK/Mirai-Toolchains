@@ -8,6 +8,13 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -rf opengcd
+	fi
+}
 
 build_opengcd()
 {
@@ -70,12 +77,11 @@ build_opengcd()
 	popd
 	
 	popd
-	
-	#clean up
-	rm -rf opengcd
 }
 
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libdispatch.so ]; then
     echo "Building libDispatch"
 	build_opengcd
 fi
+
+cleanUp

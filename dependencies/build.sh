@@ -12,22 +12,50 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up libpng
+		rm libpng-$LIB_PNG_VERSION.tar.gz
+		rm -r libpng-$LIB_PNG_VERSION
+	
+		#clean up libjpeg
+		rm libjpeg-turbo-1.3.0.tar.gz
+		rm -r libjpeg-turbo-1.3.0
+	
+		#clean up tiff
+		rm tiff-4.0.3.tar.gz
+		rm -r tiff-4.0.3
+		
+		#clean up freetype
+		rm freetype-2.5.1.tar.gz
+		rm -rf freetype-2.5.1
+		
+		#clean up fontconfig
+		rm -rf fontconfig
+	
+		#clean up expat
+		rm expat-2.1.0.tar.gz
+		rm -r expat-2.1.0
+	
+		#clean up lcms
+		rm lcms-1.19.tar.gz
+		rm -r lcms-1.19
+	fi
+}
 
 buildLibPNG()
 {
-	# change version to newest if download failed.
-	# http://www.libpng.org/pub/png/libpng.html
-	LIB_PNG_VERSION=1.6.14
 	
-	if [ ! -d libpng-$LIB_PNG_VERSION ]; then
-		if [ ! -f libpng-$LIB_PNG_VERSION.tar.gz ]; then
-			echo "Download libpng..."
-			curl -O ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-$LIB_PNG_VERSION.tar.gz
-		fi
-		tar -xvf libpng-$LIB_PNG_VERSION.tar.gz
+	if [ ! -d libpng ]; then
+		git clone https://github.com/MiraiSDK/libpng.git
+		pushd libpng
+		git checkout tags/v1.6.16
+		./autogen.sh
+		popd
 	fi
 
-	pushd libpng-$LIB_PNG_VERSION
+	pushd libpng
 
 	FLAGS="$ARCHFLAGS --sysroot $MIRAI_SDK_PATH"
 
@@ -38,11 +66,7 @@ buildLibPNG()
 
 	make install
 
-	popd
-	
-	#clean up
-	rm libpng-$LIB_PNG_VERSION.tar.gz
-	rm -r libpng-$LIB_PNG_VERSION
+	popd	
 }
 
 buildLibJPEG()
@@ -68,10 +92,6 @@ buildLibJPEG()
 	make install
 	
 	popd
-	
-	#clean up
-	rm libjpeg-turbo-1.3.0.tar.gz
-	rm -r libjpeg-turbo-1.3.0
 }
 
 buildLibTIFF()
@@ -96,12 +116,7 @@ buildLibTIFF()
 	make install
 
 	popd
-	
-	#clean up
-	rm tiff-4.0.3.tar.gz
-	rm -r tiff-4.0.3
 }
-
 
 buildFreetype()
 {
@@ -121,11 +136,7 @@ buildFreetype()
 	
 	make install
 
-	popd
-	
-	#clean up
-	rm freetype-2.5.1.tar.gz
-	rm -rf freetype-2.5.1
+	popd	
 }
 
 buildFontconfig()
@@ -134,6 +145,8 @@ buildFontconfig()
 		git clone git://anongit.freedesktop.org/fontconfig
 		
 		pushd fontconfig
+			git checkout tags/2.11.92
+			
 			patch -p1 -i ../fontconfig_android_lconv.patch
 			patch -p1 -i ../fontconfig_autogen.patch
 			
@@ -151,9 +164,6 @@ buildFontconfig()
 	make install
 
 	popd
-	
-	#clean up
-	rm -rf fontconfig
 }
 
 buildExpat()
@@ -176,10 +186,6 @@ buildExpat()
 	make install
 
 	popd
-	
-	#clean up
-	rm expat-2.1.0.tar.gz
-	rm -r expat-2.1.0
 }
 
 buildLCMS()
@@ -210,10 +216,6 @@ buildLCMS()
 	make install
 
 	popd
-	
-	#clean up
-	rm lcms-1.19.tar.gz
-	rm -r lcms-1.19
 }
 
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libpng.a ]; then
@@ -251,5 +253,6 @@ buildLCMS
 checkError $? "Make lcms failed"
 fi
 
+cleanUp
 
 

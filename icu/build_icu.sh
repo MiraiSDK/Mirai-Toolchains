@@ -17,6 +17,16 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		echo "Clean..."
+		rm -rf build_icu_osx
+		rm -rf build_icu_android
+		rm -r icu
+	fi
+}
+
 # 1.download icu
 if [ ! -d icu ]; then
 	echo "Downloding icu from SVN..."
@@ -84,10 +94,6 @@ checkError $? "Make install osx version failed"
 buildAndroidVersion
 checkError $? "Make install android version failed"
 
+cleanUp
 
-#clean 
-echo "Clean..."
-rm -rf build_icu_osx
-rm -rf build_icu_android
-rm -r icu
 popd

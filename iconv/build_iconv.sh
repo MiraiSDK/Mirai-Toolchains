@@ -9,6 +9,15 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -r libiconv-1.14
+		rm libiconv-1.14.tar.gz
+	fi
+}
+
 buildLibiconv()
 {
 	
@@ -38,9 +47,7 @@ buildLibiconv()
 	
 	popd
 	
-	#clean up
-	rm -r libiconv-1.14
-	rm libiconv-1.14.tar.gz
 }
 
 buildLibiconv
+cleanUp

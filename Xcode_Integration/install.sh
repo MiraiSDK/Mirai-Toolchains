@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ANDROID_CLANG_PATH=`which arm-linux-androideabi-clang`
+ANDROID_CLANG_PATH=`which $CROSS_CLANG`
 if [[ "$ANDROID_CLANG_PATH" == "" ]]; then
 	echo "can not get ANDROID_CLANG_PATH:$ANDROID_CLANG_PATH"
 	exit 1

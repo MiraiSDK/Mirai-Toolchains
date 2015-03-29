@@ -10,7 +10,7 @@ index a9e20cf..a5cc8eb 100644
 -  soname_spec='${libname}${release}${shared_ext}$major'
 +  case $host_os in
 +  # This must be Linux Android ELF which has no support for versioned libs.
-+  linux-android*)
++  linux-android* | linux-android)
 +    library_names_spec='$libname${shared_ext}'
 +    soname_spec='${libname}${shared_ext}'
 +    ;;

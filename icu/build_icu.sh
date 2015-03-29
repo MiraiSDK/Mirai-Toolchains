@@ -28,10 +28,15 @@ cleanUp()
 }
 
 # 1.download icu
-if [ ! -d icu ]; then
-	echo "Downloding icu from SVN..."
-	svn export http://source.icu-project.org/repos/icu/icu/tags/release-52-1/ icu
-fi
+downloadICU()
+{
+	if [ ! -d icu ]; then
+		echo "Downloding icu from SVN..."
+		svn export http://source.icu-project.org/repos/icu/icu/tags/release-52-1/ icu
+	
+		checkError $? "Download icu failed"
+	fi
+}
 
 #2. build build target, assume is OSX
 buildOSXVersion()
@@ -81,12 +86,15 @@ buildAndroidVersion()
 	../icu/source/configure --with-cross-build=$ICU_CROSS_BUILD \
 	--enable-extras=no --enable-strict=no -enable-static --disable-shared \
 	--enable-tests=no --enable-samples=no --enable-dyload=no \
-	--host=arm-linux-androideabi --prefix=$ICU_PREFIX --enable-debug
+	--host=$HOSTEABI --prefix=$ICU_PREFIX --enable-debug
 	make -j4
 	make install 
 
 	popd
 }
+
+downloadICU
+checkError $? "Download icu failed"
 
 buildOSXVersion
 checkError $? "Make install osx version failed"

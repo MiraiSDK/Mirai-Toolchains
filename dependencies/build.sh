@@ -59,12 +59,15 @@ buildLibPNG()
 
 	FLAGS="$ARCHFLAGS --sysroot $MIRAI_SDK_PATH"
 
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar CPPFLAGS="$FLAGS" CFLAGS="$FLAGS" \
-		./configure --host=arm-linux-androideabi --prefix=$PREFIX
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR CPPFLAGS="$FLAGS" CFLAGS="$FLAGS" \
+		./configure --host=$HOSTEABI --prefix=$PREFIX
+	checkError $? "Configure libpng failed"
+	
 	make -j4
 	checkError $? "Make libpng failed"
 
 	make install
+	checkError $? "Install libpng failed"
 
 	popd	
 }
@@ -84,12 +87,15 @@ buildLibJPEG()
 
 	pushd libjpeg-turbo-1.3.0
 
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB \
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX
+	checkError $? "Configure libjpeg failed"
+	
 	make -j4
 	checkError $? "Make libjpeg failed"
 	
 	make install
+	checkError $? "Install libjpeg failed"
 	
 	popd
 }
@@ -108,12 +114,15 @@ buildLibTIFF()
 
 	pushd tiff-4.0.3
 
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib  \
-	CFLAGS="$CFLAGS $ARCHFLAGS" CPPFLAGS="$CPPFLAGS $ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX --enable-shared=no
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB \
+	CFLAGS="$CFLAGS $ARCHFLAGS" CPPFLAGS="$CPPFLAGS $ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX --enable-shared=no
+	checkError $? "Configure libtiff failed"
+	
 	make -j4
 	checkError $? "Make libtiff failed"
 	
 	make install
+	checkError $? "Install libtiff failed"
 
 	popd
 }
@@ -130,11 +139,15 @@ buildFreetype()
 	pushd freetype-2.5.1
 	
 	LIBPNG_CFLAGS="-I$PREFIX/include/libpng16" LIBPNG_LIBS="-L$PREFIX/lib -lpng16" \
-	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX --without-zlib
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX --without-zlib
+	checkError $? "Configure freetype failed"
+	
 	make -j4
-	checkError $? "Make free type failed"
+	checkError $? "Make freetype failed"
 	
 	make install
+	checkError $? "Install freetype failed"
+	
 
 	popd	
 }
@@ -157,11 +170,13 @@ buildFontconfig()
 	pushd fontconfig
 
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib CFLAGS="$ARCHFLAGS -DANDROID" CPPFLAGS="$ARCHFLAGS -DANDROID"  ./configure --host=arm-linux-androideabi --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes #--with-cache-dir="/sdcard/.fccache"
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB CFLAGS="$ARCHFLAGS -DANDROID" CPPFLAGS="$ARCHFLAGS -DANDROID"  ./configure --host=$HOSTEABI --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes #--with-cache-dir="/sdcard/.fccache"
+	checkError $? "configure fontconfig failed"
 	make -j4
 	checkError $? "Make fontconfig failed"
 	
 	make install
+	checkError $? "install fontconfig failed"
 
 	popd
 }
@@ -178,12 +193,16 @@ buildExpat()
 
 	pushd expat-2.1.0
 
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB \
+	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX 
+	checkError $? "Configure expat failed"
+	
 	make -j4
 	checkError $? "Make expat failed"
 	
 	make install
+	checkError $? "Install expat failed"
+	
 
 	popd
 }
@@ -208,12 +227,15 @@ buildLCMS()
 	pushd lcms-1.19
 
 	export CFLAGS="$ARCHFLAGS -DANDROID"
-	CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar RANLIB=arm-linux-androideabi-ranlib \
-	CPPFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix=$PREFIX 
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB \
+	CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX 
+	checkError $? "Configure lcms failed"
+	
 	make -j4
 	checkError $? "Make lcms failed"
 	
 	make install
+	checkError $? "Install lcms failed"
 
 	popd
 }

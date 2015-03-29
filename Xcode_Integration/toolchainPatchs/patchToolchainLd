@@ -4,7 +4,7 @@ pushd `pwd`/`dirname $0`
 FILE_ROOT=`pwd`
 popd
 
-pushd $STANDALONE_TOOLCHAIN_PATH/arm-linux-androideabi/bin
+pushd $STANDALONE_TOOLCHAIN_PATH/$TARGETEABI/bin
 
 if [ -f realld ]; then
 	echo "already pached"

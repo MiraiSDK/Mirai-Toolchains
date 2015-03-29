@@ -1,0 +1,24 @@
+From 9efa1b11d99bf51f4c365cd5e74c54f185580671 Mon Sep 17 00:00:00 2001
+From: Yonghui Chen <chyhfj@gmail.com>
+Date: Sun, 29 Mar 2015 20:45:00 +0800
+Subject: [PATCH] patch timerfd
+
+---
+ src/linux/timer.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/linux/timer.c b/src/linux/timer.c
+index 96e3917..d448291 100644
+--- a/src/linux/timer.c
++++ b/src/linux/timer.c
+@@ -24,6 +24,7 @@
+ #define __NR_timerfd_create             (__NR_SYSCALL_BASE+350)
+ #define __NR_timerfd_settime            (__NR_SYSCALL_BASE+353)
+ #define __NR_timerfd_gettime            (__NR_SYSCALL_BASE+354)
++#elif defined(__i386__)
+ #else
+ #error Unsupported architecture, need to get the syscall numbers
+ #endif
+-- 
+1.9.3 (Apple Git-50)
+

@@ -3,6 +3,7 @@
 foundFileList="no"
 fileListPath=""
 finalCommand=""
+foundFramework="no"
 
 for arg in "$@"
 do
@@ -17,20 +18,21 @@ do
         foundFileList="yes"
 		continue;
     fi
+	
+	if [[ "$foundFramework" == "yes" ]]; then
+		foundFramework="no"
+		newArg="-l$arg"
+	fi
+	
+    if [ "$arg" == "-framework" ]; then
+        foundFramework="yes"
+		continue;
+    fi
+	
 	finalCommand="$finalCommand $newArg"
 done
 
 finalCommand=${finalCommand//" -dynamiclib "/" -shared "}
-
-finalCommand=${finalCommand//" -framework UIKit "/" -lUIKit "}
-finalCommand=${finalCommand//" -framework CoreGraphics "/" -lCoreGraphics "}
-finalCommand=${finalCommand//" -framework Foundation "/" -lgnustep-base "}
-finalCommand=${finalCommand//" -framework QuartzCore "/" -lQuartzCore "}
-finalCommand=${finalCommand//" -framework CoreFoundation "/" -lgnustep-corebase "}
-finalCommand=${finalCommand//" -framework CoreText "/" -lCoreText "}
-finalCommand=${finalCommand//" -framework OpenGLES "/" -lOpenGLES "}
-finalCommand=${finalCommand//" -framework MediaPlayer "/" -lMediaPlayer "}
-
 
 echo "final command: $finalCommand"
 `dirname $0`/realld $finalCommand

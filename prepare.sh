@@ -440,13 +440,9 @@ fi
 
 #15. Core Graphics (opal)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
-	echo "build CoreGraphics..."
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreGraphics
-	xcodebuild -target CoreGraphics-Android
+	./toolchain_build.sh
 	checkError $? "build CoreGraphics failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
@@ -465,22 +461,16 @@ fi
 #17. OpenGL ES
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-OpenGLES
-	xcodebuild -target OpenGLES-Android
+	./toolchain_build.sh
 	checkError $? "build OpenGLES failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
 #18. QuartzCore
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-QuartzCore
-	xcodebuild -target GSQuartzCore-Android
+	./toolchain_build.sh
 	checkError $? "build QuartzCore failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
@@ -489,40 +479,20 @@ fi
 #############
 
 #19. create a empty availability
-if [ ! -f $MIRAI_SDK_PREFIX/include/Availability.h ]; then
-	touch $MIRAI_SDK_PREFIX/include/Availability.h
-fi
-
 #20. TNJavaHelper
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libTNJavaHelper.so ]; then
-	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit/TNJavaHelper
-	xcodebuild -target TNJavaHelper-Android
-	checkError $? "build JavaHelper failed"
-	
-	#clean up
-	rm -r build
-	popd
-fi
-
 #21. UIKit
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit
-	xcodebuild -target UIKit
+	./toolchain_build.sh
 	checkError $? "build UIKit failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
 #22. MediaPlayer
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-MediaPlayer
-	xcodebuild -target MediaPlayer-Android
+	./toolchain_build.sh
 	checkError $? "build MediaPlayer failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 

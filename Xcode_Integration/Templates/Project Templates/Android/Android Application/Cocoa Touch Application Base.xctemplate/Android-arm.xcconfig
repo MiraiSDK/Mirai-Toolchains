@@ -1,0 +1,17 @@
+//
+//  ___FILENAME___
+//  ___PACKAGENAME___
+//
+//  Created by ___FULLUSERNAME___ on ___DATE___.
+//___COPYRIGHT___
+//
+
+#include "Android.xcconfig"
+
+TOOLCHAIN_ARCH=arm
+
+ARCHFLAGS=-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
+ARCHLDFLAGS=-march=armv7-a -Wl,--fix-cortex-a8
+
+OTHER_CFLAGS = $(ARCHFLAGS) $(OTHER_CFLAGS)
+OTHER_LDFLAGS =$(ARCHLDFLAGS) $(OTHER_LDFLAGS)

@@ -13,5 +13,5 @@ TOOLCHAIN_ARCH=arm
 ARCHFLAGS=-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 ARCHLDFLAGS=-march=armv7-a -Wl,--fix-cortex-a8
 
-OTHER_CFLAGS = $(ARCHFLAGS) $(OTHER_CFLAGS)
-OTHER_LDFLAGS =$(ARCHLDFLAGS) $(OTHER_LDFLAGS)
+OTHER_CFLAGS = $(inherited) $(ARCHFLAGS) $(BASE_CFLAGS)
+OTHER_LDFLAGS = $(inherited) $(ARCHLDFLAGS) $(BASE_LDFLAGS)

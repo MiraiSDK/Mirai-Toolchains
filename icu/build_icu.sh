@@ -42,26 +42,34 @@ downloadICU()
 buildOSXVersion()
 {
 	echo "Build osx target..."
-	mkdir $SCRIPT_ROOT/build_icu_osx
+	if [ ! -d build_icu_osx ]; then
+		mkdir $SCRIPT_ROOT/build_icu_osx
 
-	pushd $SCRIPT_ROOT/build_icu_osx
+		pushd $SCRIPT_ROOT/build_icu_osx
 
-	export CPPFLAGS="-DU_USING_ICU_NAMESPACE=0 -fno-short-enums \
-	-DU_HAVE_NL_LANGINFO_CODESET=0 -D__STDC_INT64__ -DU_TIMEZONE=1 \
-	-DUCONFIG_NO_LEGACY_CONVERSION=1 -DUCONFIG_NO_TRANSLITERATION=0"
+		export CPPFLAGS="-DU_USING_ICU_NAMESPACE=0 -fno-short-enums \
+		-DU_HAVE_NL_LANGINFO_CODESET=0 -D__STDC_INT64__ -DU_TIMEZONE=1 \
+		-DUCONFIG_NO_LEGACY_CONVERSION=1 -DUCONFIG_NO_TRANSLITERATION=0"
 
-	../icu/source/runConfigureICU MacOSX --prefix=$PWD/icu_build --enable-extras=no --enable-strict=no -enable-static -enable-shared --enable-tests=no --enable-samples=no --enable-dyload=no --enable-debug
-	make -j4
-	make install
-    checkError $? "Make install osx version failed"
+		../icu/source/runConfigureICU MacOSX --prefix=$PWD/icu_build --enable-extras=no --enable-strict=no -enable-static -enable-shared --enable-tests=no --enable-samples=no --enable-dyload=no --enable-debug
+		make -j4
+		make install
+	    checkError $? "Make install osx version failed"
 	
-	popd	
+		popd	
+	fi
+
 }
 
 #3. build host target
 buildAndroidVersion()
 {
 	echo "build android target..."
+	
+	if [ -d $SCRIPT_ROOT/build_icu_android ]; then
+		rm -rf $SCRIPT_ROOT/build_icu_android
+	fi
+	
 	mkdir $SCRIPT_ROOT/build_icu_android
 	pushd $SCRIPT_ROOT/build_icu_android
 

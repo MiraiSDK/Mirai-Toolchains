@@ -50,6 +50,8 @@ build_opengcd()
 		checkError $? "build dispatch dependencies failed"
 	
 		make install	
+		
+		make clean
 	fi
 
 	if [ ! -f libdispatch_patched ]; then
@@ -61,7 +63,7 @@ build_opengcd()
 		autoreconf -fvi
 	
 	    patch -p1 < ../../libtool_android_version.patch
-		autoconf
+		autoconf -f
 		popd
 		
 		touch libdispatch_patched
@@ -69,15 +71,19 @@ build_opengcd()
 
 	
 	pushd libdispatch
+	
 	ac_cv_lib_pthread_workqueue_pthread_workqueue_init_np=yes PKG_CONFIG_PATH=$MIRAI_SDK_PKG_CONFIG_PATH CFLAGS="$ARCHFLAGS -DANDROID=1 -DHAVE_SYS_EVENTFD_H=1" CC=$CROSS_CLANG \
 	LDFLAGS=" -lgnustl_shared -lc " \
 	./configure --host=$HOSTEABI --prefix=$MIRAI_SDK_PREFIX
 	checkError $? "configure libdispatch failed"
 	
-	make 
+	make -j4
 	checkError $? "build libdispatch failed"
 	
 	make install
+	
+	make clean
+	
 	popd
 	
 	popd

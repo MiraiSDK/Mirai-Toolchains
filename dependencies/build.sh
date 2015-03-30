@@ -69,6 +69,8 @@ buildLibPNG()
 	make install
 	checkError $? "Install libpng failed"
 
+	make clean
+	
 	popd	
 }
 
@@ -97,6 +99,8 @@ buildLibJPEG()
 	make install
 	checkError $? "Install libjpeg failed"
 	
+	make clean
+	
 	popd
 }
 
@@ -124,6 +128,8 @@ buildLibTIFF()
 	make install
 	checkError $? "Install libtiff failed"
 
+	make clean
+	
 	popd
 }
 
@@ -148,6 +154,7 @@ buildFreetype()
 	make install
 	checkError $? "Install freetype failed"
 	
+	make clean
 
 	popd	
 }
@@ -177,6 +184,8 @@ buildFontconfig()
 	
 	make install
 	checkError $? "install fontconfig failed"
+	
+	make clean
 
 	popd
 }
@@ -203,6 +212,7 @@ buildExpat()
 	make install
 	checkError $? "Install expat failed"
 	
+	make clean
 
 	popd
 }
@@ -236,6 +246,8 @@ buildLCMS()
 	
 	make install
 	checkError $? "Install lcms failed"
+
+	make clean
 
 	popd
 }

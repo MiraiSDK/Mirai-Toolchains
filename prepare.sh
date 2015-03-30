@@ -65,7 +65,7 @@ case $ABI in
 	arm)
 		export ARCH_PREFIX=arm
 		export TOOL_PREFIX=$ARCH_PREFIX-linux-androideabi
-		export ABILIBNAME=arm
+		export ABILIBNAME=armeabi
 		export ARCHFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
 		export ARCHLDFLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
 		export HOSTEABI="$ARCH_PREFIX-linux-androideabi"

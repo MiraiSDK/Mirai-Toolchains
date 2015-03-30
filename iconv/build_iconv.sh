@@ -45,6 +45,8 @@ buildLibiconv()
 	
 	make install
 	
+	make clean
+	
 	popd
 	
 }

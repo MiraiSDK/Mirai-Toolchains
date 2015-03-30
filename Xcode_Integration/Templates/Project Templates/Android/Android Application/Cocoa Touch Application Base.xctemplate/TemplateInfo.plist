@@ -407,7 +407,7 @@ cp &quot;$SRCROOT/$PRODUCT_NAME/Android.mk&quot; jni/
         echo &quot;Unknow TOOLCHAIN_ARCH:$TOOLCHAIN_ARCH, fallback to arm&quot;
     esac
    
-    echo &quot;APP_ABI := $TOOLCHAIN_ARCH&quot; &gt; jni/Application.mk
+    echo &quot;APP_ABI := $APP_ABI&quot; &gt; jni/Application.mk
 
 
 #copy resources

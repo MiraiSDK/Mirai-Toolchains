@@ -222,6 +222,24 @@ self.window.rootViewController = [[ViewController alloc] initWithNibName:nil bun
 							<key>TargetIndices</key>
 							<array/>
 						</dict>
+						<key>Android-arm.xcconfig</key>
+						<dict>
+							<key>Group</key>
+							<string>Supporting Files</string>
+							<key>Path</key>
+							<string>Android-arm.xcconfig</string>
+							<key>TargetIndices</key>
+							<array/>
+						</dict>
+						<key>Android-x86.xcconfig</key>
+						<dict>
+							<key>Group</key>
+							<string>Supporting Files</string>
+							<key>Path</key>
+							<string>Android-x86.xcconfig</string>
+							<key>TargetIndices</key>
+							<array/>
+						</dict>
 						<key>Android.xcconfig</key>
 						<dict>
 							<key>Group</key>
@@ -281,6 +299,8 @@ self.window.rootViewController = [[ViewController alloc] initWithNibName:nil bun
 						<string>TNAndroidLauncher.h</string>
 						<string>TNAndroidLauncher.m</string>
 						<string>Android.xcconfig</string>
+						<string>Android-arm.xcconfig</string>
+						<string>Android-x86.xcconfig</string>
 						<string>Android.mk</string>
 						<string>MainActivity.java</string>
 						<string>AndroidManifest.xml</string>
@@ -297,6 +317,8 @@ self.window.rootViewController = [[ViewController alloc] initWithNibName:nil bun
 									<string>/bin/sh</string>
 									<key>ShellScript</key>
 									<string>
+set -e
+
 relpath()
 {
     s=$(cd ${1%%/};pwd); d=$(cd $2;pwd); while [ &quot;${d#$s/}&quot; == &quot;${d}&quot; ]
@@ -373,6 +395,21 @@ echo &quot;coping jni files..&quot;
 cp &quot;$TN_EXEC_PATH&quot; &quot;jni/$EXECUTABLE_NAME.so&quot;
 cp &quot;$SRCROOT/$PRODUCT_NAME/Android.mk&quot; jni/
 
+    APP_ABI=armeabi
+    case $TOOLCHAIN_ARCH in
+        arm* | arm)
+        APP_ABI=armeabi
+            ;;
+        x86)
+        APP_ABI=x86
+            ;;
+        *)
+        echo &quot;Unknow TOOLCHAIN_ARCH:$TOOLCHAIN_ARCH, fallback to arm&quot;
+    esac
+   
+    echo &quot;APP_ABI := $APP_ABI&quot; &gt; jni/Application.mk
+
+
 #copy resources
 echo &quot;coping resources...&quot;
 mkdir -p assets
@@ -380,8 +417,6 @@ cp -R &quot;$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/&quot; assets/
 
 #build ndk
 ndk-build
-
-# run if needs
     
 popd
 </string>
@@ -390,9 +425,9 @@ popd
 							<key>BasedOn</key>
 							<dict>
 								<key>Debug</key>
-								<string>Android.xcconfig</string>
+								<string>Android-arm.xcconfig</string>
 								<key>Release</key>
-								<string>Android.xcconfig</string>
+								<string>Android-arm.xcconfig</string>
 							</dict>
 							<key>Frameworks</key>
 							<array>

@@ -1,0 +1,26 @@
+From 2c3445bec417d4a28c33f9c8f552ff40876dc8f0 Mon Sep 17 00:00:00 2001
+From: Yonghui Chen <chyhfj@gmail.com>
+Date: Sun, 29 Mar 2015 20:39:46 +0800
+Subject: [PATCH] patch GNU_SOURCE
+
+---
+ src/linux/platform.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/linux/platform.h b/src/linux/platform.h
+index c6077fd..ce4c7bc 100644
+--- a/src/linux/platform.h
++++ b/src/linux/platform.h
+@@ -42,7 +42,9 @@ struct filter;
+ /*
+  * Get the current thread ID
+  */
++#ifndef _GNU_SOURCE
+ # define _GNU_SOURCE
++#endif
+ # include <linux/unistd.h>
+ # include <unistd.h>
+ #ifndef __ANDROID__
+-- 
+1.9.3 (Apple Git-50)
+

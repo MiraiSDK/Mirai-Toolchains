@@ -8,6 +8,15 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm libxml2-2.9.0.tar.gz
+		rm -rf libxml2-2.9.0
+	fi
+}
+
 if [ ! -f $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/libxml2.a ]; then
     echo "Building libxml2"
 
@@ -29,7 +38,7 @@ if [ ! -f $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/libxml2.a ]; then
 
     # build with gcc instead of clang
     # using clang produce an error missing symbol 'nan'
-	CC="$GCC_ARM" LD="$LD_ARM" CXX="$CLANGPP_ARM" CPPFLAGS="$ARCHFLAGS $SYSROOTFLAGS_ARM" CFLAGS="$ARCHFLAGS $SYSROOTFLAGS_ARM" AR="$AR_ARM" OBJDUMP="$OBJDUMP_ARM" RANLIB="$RANLIB_ARM" ./configure --prefix=$MIRAI_SDK_PREFIX --host="arm-linux-androideabi" --with-sysroot=$MIRAI_SDK_PATH --disable-shared
+	CC="$CROSS_GCC"  CXX="$CROSS_CLANGPP" CPPFLAGS="$ARCHFLAGS $SYSROOTFLAGS" CFLAGS="$ARCHFLAGS $SYSROOTFLAGS" ./configure --prefix=$MIRAI_SDK_PREFIX --host="$HOSTEABI" --with-sysroot=$MIRAI_SDK_PATH --disable-shared
     checkError $? "configure libxml2 failed"
 	
 	make -j4
@@ -39,7 +48,6 @@ if [ ! -f $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/libxml2.a ]; then
     checkError $? "Make install libxml2 failed"
 	popd
 	
-	#clean up
-	rm libxml2-2.9.0.tar.gz
-	rm -rf libxml2-2.9.0
 fi
+
+cleanUp

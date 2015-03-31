@@ -12,6 +12,14 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -r libobjc2	
+	fi
+}
+
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 
 	if [ ! -d libobjc2 ]; then
@@ -31,7 +39,7 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 	rm -rf ./*
 
 	# disable test, some tests failed due to cross-compiled 
-	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" LDFLAGS="$ARCHLDFLAGS" cmake -DTESTS=0 -DCMAKE_TOOLCHAIN_FILE=$SCRIPT_ROOT/toolchain.cmake -DCMAKE_FIND_ROOT_PATH=$MIRAI_SDK_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
+	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" LDFLAGS="$ARCHLDFLAGS" cmake -DTESTS=0 -DCMAKE_TOOLCHAIN_FILE=$SCRIPT_ROOT/toolchain-$ABI.cmake -DCMAKE_FIND_ROOT_PATH=$MIRAI_SDK_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
 	make
 	checkError $? "build objc2 failed"
 	
@@ -40,7 +48,6 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 	
 	popd
 	
-	#clean up
-	rm -r libobjc2
-
 fi
+
+cleanUp

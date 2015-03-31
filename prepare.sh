@@ -2,6 +2,19 @@
 
 set -e
 
+printUsage()
+{
+	echo "Usage: prepare.sh [options]
+	
+Options:
+	-a <ABI>: build with abi, which is one of values:[arm x86]; default value is arm
+	-j <JDK_PATH>: PATH of JDK
+	-n <NDK_PATH>: PATH of NDK
+	-k : keep downloaded files.
+	-h : show this help infomation
+	"
+}
+
 ## To avoid permission issues, user should not run this script as root
 if [[ $EUID -eq 0 ]]; then
 	echo "This script must not be run as root" 1>&2
@@ -16,41 +29,109 @@ pushd $SCRIPT_ROOT/..
 export MIRAI_PROJECT_ROOT_PATH=`pwd`
 popd
 
+################ parser options ################
+
+OPTION_ABI=arm
+OPTION_KEEP_FILES=no
+OPTION_NDK_PATH=""
+OPTION_JDK_PATH=""
+
+while getopts 'a:jnkh' opt ; do
+	 case $opt in
+		 a) OPTION_ABI=$OPTARG ;;
+		 k) OPTION_KEEP_FILES=yes ;;
+		 n) OPTION_NDK_PATH=$OPTARG ;;
+		 j) OPTION_JDK_PATH=$OPTARG ;;
+		 h) printUsage; exit 0 ;;
+		 *) echo "unknow opt:$opt"
+		 	printUsage
+		 	exit 1
+		 	;;
+	 esac
+done
+
+################ env setting ################
+
+##-k: should clean up
+export MIRAI_CLEAN_UP="yes"
+if [ $OPTION_KEEP_FILES != no ]; then
+	MIRAI_CLEAN_UP="no"
+fi
+
+## ABI setting
+export ABI=$OPTION_ABI
+
+case $ABI in
+	arm)
+		export ARCH_PREFIX=arm
+		export TOOL_PREFIX=$ARCH_PREFIX-linux-androideabi
+		export ABILIBNAME=armeabi
+		export ARCHFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
+		export ARCHLDFLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
+		export HOSTEABI="$ARCH_PREFIX-linux-androideabi"
+		export TARGETEABI="$ARCH_PREFIX-linux-androideabi"
+		
+		;;
+	x86)
+		export ARCH_PREFIX=i686
+		export TOOL_PREFIX=$ARCH_PREFIX-linux-android
+		export ABILIBNAME=x86
+		export ARCHFLAGS=""
+		export ARCHLDFLAGS=""
+		export HOSTEABI="$ARCH_PREFIX-linux-android"
+		export TARGETEABI="$ARCH_PREFIX-linux-android"
+		
+		;;
+	*)
+		echo "Unknow ABI:$ABI";
+		exit 1
+esac
+
+export CROSS_CLANG=$TOOL_PREFIX-clang
+export CROSS_CLANGPP=$TOOL_PREFIX-clang++
+export CROSS_GCC=$TOOL_PREFIX-gcc
+export CROSS_LD=$TOOL_PREFIX-ld
+export CROSS_GXX=$TOOL_PREFIX-g++
+export CROSS_AR=$TOOL_PREFIX-ar
+export CROSS_RANLIB=$TOOL_PREFIX-ranlib
+export CROSS_OBJDUMP=$TOOL_PREFIX-objdump
+export CROSS_GDB=$TOOL_PREFIX-gdb
+
+## NDK and JDK PATH
 export MIRAI_TOOLCHAIN_ANDROID_PATH="$MIRAI_PROJECT_ROOT_PATH/toolchain/android"
 export MIRAI_PRODUCTS_ANDROID_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH"
 
-if [ "$ANDROID_NDK_PATH" == "" ]; then
-export ANDROID_NDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/android-ndk-r9b" # if you already has NDK, change this to you NDK path
-fi
-if [ "$ANDROID_JDK_PATH" == "" ]; then
-export ANDROID_JDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/adt-bundle-mac-x86_64-20131030/sdk" # if you already has JDK, change this to you JDK path
+if [ "$OPTION_NDK_PATH" != "" ]; then
+	export ANDROID_NDK_PATH=$OPTION_NDK_PATH
 fi
 
+if [ "$OPTION_JDK_PATH" != "" ]; then
+	export ANDROID_JDK_PATH=$OPTION_JDK_PATH
+fi
+
+if [ "$ANDROID_NDK_PATH" == "" ]; then
+export ANDROID_NDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/android-ndk-r9b"
+fi
+if [ "$ANDROID_JDK_PATH" == "" ]; then
+export ANDROID_JDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/adt-bundle-mac-x86_64-20131030/sdk"
+fi
+
+### folder setting
 export MIRAI_SDK_PATH="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/Android18.sdk"
 export MIRAI_SDK_PREFIX="$MIRAI_SDK_PATH/usr"
 export MIRAI_SDK_PKG_CONFIG_PATH="$MIRAI_SDK_PREFIX/lib/pkgconfig"
 
 export MIRAI_LOCAL_XCODE_SDK_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18.sdk"
+export MIRAI_LOCAL_XCODE_SDK_PATH_ARCH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18-$ABI.sdk"
 export MIRAI_LOCAL_XCODE_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
 
-export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-arm"
+export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-$ABI"
 export GNUSTEP_MAKE_CONFIG_PATH="$SCRIPT_ROOT/gnu-config"
-export SYSROOTFLAGS_ARM="--sysroot $MIRAI_SDK_PATH"
 
 export PKG_CONFIG_LIBDIR=$MIRAI_SDK_PREFIX/lib/pkgconfig
 export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
 
-export CLANG_ARM=arm-linux-androideabi-clang
-export CLANGPP_ARM=arm-linux-androideabi-clang++
-export GCC_ARM=arm-linux-androideabi-gcc
-export LD_ARM=arm-linux-androideabi-ld
-export GXX_ARM=arm-linux-androideabi-g++
-export AR_ARM=arm-linux-androideabi-ar
-export RANLIB_ARM=arm-linux-androideabi-ranlib
-export OBJDUMP_ARM=arm-linux-androideabi-objdump
-export ARCHFLAGS="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
-export ARCHLDFLAGS="-march=armv7-a -Wl,--fix-cortex-a8"
-
+export SYSROOTFLAGS="--sysroot $MIRAI_SDK_PATH"
 
 #### check tools required ###
 
@@ -72,6 +153,7 @@ checkToolExists "aclocal"
 ## check ant
 checkToolExists "ant"
 
+## function to check error
 checkError()
 {
     if [ "${1}" -ne "0" ]; then
@@ -79,6 +161,28 @@ checkError()
         exit ${1}
     fi
 }
+
+## function to cleanup files
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up ndk 
+		pushd $MIRAI_PRODUCTS_ANDROID_PATH
+			if [ -d $ANDROID_NDK_PATH ]; then
+				rm android-ndk-r9b-darwin-x86_64.tar.bz2
+			fi
+		popd
+		
+		#clean up jdk
+		pushd $MIRAI_PRODUCTS_ANDROID_PATH
+			rm adt-bundle-mac-x86_64-20131030.zip
+		popd
+		
+		#clean up
+		cleanupGNUstepMake
+	fi
+}
+
 
 #0. link between Xcode SDK and Mirai SDK
 #	we do this at beginning because this step needs sudo privilege
@@ -118,9 +222,7 @@ if [ ! -d $ANDROID_NDK_PATH ]; then
 		patch -p0 < $SCRIPT_ROOT/android_toolchain_patchs/ndk-gdb.patch
 	popd
 	
-	if [ -d $ANDROID_NDK_PATH ]; then
-		rm android-ndk-r9b-darwin-x86_64.tar.bz2
-	fi
+	
 	popd
 fi
 
@@ -135,9 +237,7 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	fi
 	
 	tar -vxzf adt-bundle-mac-x86_64-20131030.zip
-	if [ -d $ANDROID_JDK_PATH ]; then
-		rm adt-bundle-mac-x86_64-20131030.zip
-	else
+	if [ ! -d $ANDROID_JDK_PATH ]; then
 		echo "Missing Android SDK folder, take a look what's extracted folder name"
 		exit 1;
 	fi
@@ -147,12 +247,11 @@ fi
 
 #2. make standalone toolchain path
 if [ ! -d $STANDALONE_TOOLCHAIN_PATH ]; then
-    $ANDROID_NDK_PATH/build/tools/make-standalone-toolchain.sh --platform="android-14" --install-dir=$STANDALONE_TOOLCHAIN_PATH --arch=arm --llvm-version=3.3
+    $ANDROID_NDK_PATH/build/tools/make-standalone-toolchain.sh --platform="android-14" --install-dir=$STANDALONE_TOOLCHAIN_PATH --arch=$ABI --llvm-version=3.3
 	
 	
-	cp $ANDROID_NDK_PATH/sources/cxx-stl/gnu-libstdc++/4.8/libs/armeabi/libgnustl_shared.so $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/
-	cp $ANDROID_NDK_PATH/toolchains/arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/lib/gcc/arm-linux-androideabi/4.8/libgcc.a $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/
-	
+	cp $ANDROID_NDK_PATH/sources/cxx-stl/gnu-libstdc++/4.8/libs/$ABILIBNAME/libgnustl_shared.so $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/
+	#cp $ANDROID_NDK_PATH/toolchains/$API-4.8/prebuilt/darwin-x86_64/lib/gcc/$TOOL_PREFIX/4.8/libgcc.a $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/
 	pushd $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib
 
 	popd
@@ -160,7 +259,6 @@ fi
 
 echo "set PATH..."
 export PATH=$PATH:$STANDALONE_TOOLCHAIN_PATH/bin # Add Android toolchain to PATH for scripting
-
 #3. link sdk path
 echo "prepare xcode sdk..."
 
@@ -175,7 +273,9 @@ pushd $SCRIPT_ROOT/android_toolchain_patchs
 popd
 
 # copy Xcode SDK directory structural
-cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural" "$MIRAI_LOCAL_XCODE_SDK_PATH"
+cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural/" "$MIRAI_LOCAL_XCODE_SDK_PATH_ARCH"
+rm -r $MIRAI_LOCAL_XCODE_SDK_PATH
+ln -sf $MIRAI_LOCAL_XCODE_SDK_PATH_ARCH $MIRAI_LOCAL_XCODE_SDK_PATH
 
 # link  between android-toolchain an mirai-toolchiain
 ln -sfh  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_LOCAL_XCODE_SDK_PREFIX"
@@ -217,7 +317,7 @@ buildGNUstepMake()
 
     patch -p1 -i ../gsmake_target.patch
 
-    CC="$CLANG_ARM" CXX="$CLANGPP_ARM" CPPFLAGS="$SYSROOTFLAGS_ARM" CFLAGS="$SYSROOTFLAGS_ARM" AR="$AR_ARM" ./configure --prefix=$MIRAI_SDK_PREFIX --host="arm-linux-androideabi"
+    CC="$CROSS_CLANG" CXX="$CROSS_CLANGPP" CPPFLAGS="$SYSROOTFLAGS" CFLAGS="$SYSROOTFLAGS" ./configure --prefix=$MIRAI_SDK_PREFIX --host="$HOSTEABI"
     checkError $? "configure gnustep-make failed"
 
     make install
@@ -261,7 +361,6 @@ echo "successful build objc runtime."
 #6. rebuild gnustep-make
 if grep USE_OBJC_EXCEPTIONS $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/config.make | grep no; then
 buildGNUstepMake
-cleanupGNUstepMake
 fi
 
 echo "start building Foundation..."
@@ -344,13 +443,9 @@ fi
 
 #15. Core Graphics (opal)
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
-	echo "build CoreGraphics..."
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreGraphics
-	xcodebuild -target CoreGraphics-Android
+	./toolchain_build.sh
 	checkError $? "build CoreGraphics failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
@@ -369,22 +464,16 @@ fi
 #17. OpenGL ES
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-OpenGLES
-	xcodebuild -target OpenGLES-Android
+	./toolchain_build.sh
 	checkError $? "build OpenGLES failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
 #18. QuartzCore
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-QuartzCore
-	xcodebuild -target GSQuartzCore-Android
+	./toolchain_build.sh
 	checkError $? "build QuartzCore failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
@@ -393,40 +482,20 @@ fi
 #############
 
 #19. create a empty availability
-if [ ! -f $MIRAI_SDK_PREFIX/include/Availability.h ]; then
-	touch $MIRAI_SDK_PREFIX/include/Availability.h
-fi
-
 #20. TNJavaHelper
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libTNJavaHelper.so ]; then
-	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit/TNJavaHelper
-	xcodebuild -target TNJavaHelper-Android
-	checkError $? "build JavaHelper failed"
-	
-	#clean up
-	rm -r build
-	popd
-fi
-
 #21. UIKit
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit
-	xcodebuild -target UIKit
+	./toolchain_build.sh
 	checkError $? "build UIKit failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 
 #22. MediaPlayer
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-MediaPlayer
-	xcodebuild -target MediaPlayer-Android
+	./toolchain_build.sh
 	checkError $? "build MediaPlayer failed"
-	
-	#clean up
-	rm -r build
 	popd
 fi
 

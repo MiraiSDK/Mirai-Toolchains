@@ -9,6 +9,15 @@ checkError()
     fi
 }
 
+cleanUp()
+{
+	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
+		#clean up
+		rm -r libiconv-1.14
+		rm libiconv-1.14.tar.gz
+	fi
+}
+
 buildLibiconv()
 {
 	
@@ -27,8 +36,8 @@ buildLibiconv()
 	cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess build-aux/config.guess
 	cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess libcharset/build-aux/config.guess
 	
-	gl_cv_header_working_stdint_h=yes CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ AR=arm-linux-androideabi-ar \
-	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" ./configure --host=arm-linux-androideabi --prefix="$MIRAI_SDK_PREFIX" --enable-static=yes --enable-shared=no
+	gl_cv_header_working_stdint_h=yes CC=$CLANG CXX=CLANGPP \
+	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix="$MIRAI_SDK_PREFIX" --enable-static=yes --enable-shared=no
 	checkError $? "configure libiconv failed"
 	
 	make -j4
@@ -36,11 +45,11 @@ buildLibiconv()
 	
 	make install
 	
+	make clean
+	
 	popd
 	
-	#clean up
-	rm -r libiconv-1.14
-	rm libiconv-1.14.tar.gz
 }
 
 buildLibiconv
+cleanUp

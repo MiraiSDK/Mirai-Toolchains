@@ -122,6 +122,7 @@ export MIRAI_SDK_PREFIX="$MIRAI_SDK_PATH/usr"
 export MIRAI_SDK_PKG_CONFIG_PATH="$MIRAI_SDK_PREFIX/lib/pkgconfig"
 
 export MIRAI_LOCAL_XCODE_SDK_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18.sdk"
+export MIRAI_LOCAL_XCODE_SDK_PATH_ARCH="$MIRAI_TOOLCHAIN_ANDROID_PATH/Android18-$ABI.sdk"
 export MIRAI_LOCAL_XCODE_SDK_PREFIX="$MIRAI_LOCAL_XCODE_SDK_PATH/usr"
 
 export STANDALONE_TOOLCHAIN_PATH="$MIRAI_TOOLCHAIN_ANDROID_PATH/android-toolchain-$ABI"
@@ -272,7 +273,9 @@ pushd $SCRIPT_ROOT/android_toolchain_patchs
 popd
 
 # copy Xcode SDK directory structural
-cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural" "$MIRAI_LOCAL_XCODE_SDK_PATH"
+cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural/" "$MIRAI_LOCAL_XCODE_SDK_PATH_ARCH"
+rm -r $MIRAI_LOCAL_XCODE_SDK_PATH
+ln -sf $MIRAI_LOCAL_XCODE_SDK_PATH_ARCH $MIRAI_LOCAL_XCODE_SDK_PATH
 
 # link  between android-toolchain an mirai-toolchiain
 ln -sfh  "$STANDALONE_TOOLCHAIN_PATH/sysroot/usr" "$MIRAI_LOCAL_XCODE_SDK_PREFIX"

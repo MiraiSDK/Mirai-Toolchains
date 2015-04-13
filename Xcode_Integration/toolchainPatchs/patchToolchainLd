@@ -6,13 +6,11 @@ popd
 
 pushd $STANDALONE_TOOLCHAIN_PATH/$TARGETEABI/bin
 
-if [ -f realld ]; then
-	echo "already pached"
-	exit 0
+if [ ! -f realld ]; then
+	#rename ld
+	mv ld realld
 fi
 
-#rename ld
-mv ld realld
 cp $FILE_ROOT/ld ld
 
 popd

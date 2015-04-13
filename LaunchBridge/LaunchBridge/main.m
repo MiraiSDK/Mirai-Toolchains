@@ -87,7 +87,7 @@ void degugTargetApp(NSString *targetProjectAndroidRoot)
     [task launch];
 }
 
-void installTargetApp(NSString *targetProjectAndroidRoot)
+int installTargetApp(NSString *targetProjectAndroidRoot)
 {
     NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:gShellPath];
@@ -97,13 +97,14 @@ void installTargetApp(NSString *targetProjectAndroidRoot)
     [task launch];
     [task waitUntilExit];
 
+    return task.terminationStatus;
 }
 
 void forwardLog()
 {
     NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:gShellPath];
-    [task setArguments:@[@"-lc",@"adb logcat -s NSLog DEBUG"]];
+    [task setArguments:@[@"-lc",@"adb logcat -s NSLog DEBUG AndroidRuntime"]];
     [task launch];
     [task waitUntilExit];
 
@@ -144,7 +145,11 @@ int main(int argc, const char * argv[])
         }
         
         // first install android app to device
-        installTargetApp(androidProjectPath);
+        int result = installTargetApp(androidProjectPath);
+        if (result != 0) {
+            NSLog(@"install failed.");
+            return 1;
+        }
         
         NSLog(@"===========Install Finished.===========");
 

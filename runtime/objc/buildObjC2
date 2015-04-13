@@ -16,7 +16,7 @@ cleanUp()
 {
 	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
 		#clean up
-		rm -r libobjc2	
+		rm -rf libobjc2	
 	fi
 }
 

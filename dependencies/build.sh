@@ -16,31 +16,31 @@ cleanUp()
 {
 	if [ "$MIRAI_CLEAN_UP" == "yes" ]; then
 		#clean up libpng
-		rm libpng-$LIB_PNG_VERSION.tar.gz
-		rm -r libpng-$LIB_PNG_VERSION
+		rm -f libpng-$LIB_PNG_VERSION.tar.gz
+		rm -rf libpng-$LIB_PNG_VERSION
 	
 		#clean up libjpeg
-		rm libjpeg-turbo-1.3.0.tar.gz
-		rm -r libjpeg-turbo-1.3.0
+		rm -f libjpeg-turbo-1.3.0.tar.gz
+		rm -rf libjpeg-turbo-1.3.0
 	
 		#clean up tiff
-		rm tiff-4.0.3.tar.gz
-		rm -r tiff-4.0.3
+		rm -f tiff-4.0.3.tar.gz
+		rm -rf tiff-4.0.3
 		
 		#clean up freetype
-		rm freetype-2.5.1.tar.gz
+		rm -f freetype-2.5.1.tar.gz
 		rm -rf freetype-2.5.1
 		
 		#clean up fontconfig
 		rm -rf fontconfig
 	
 		#clean up expat
-		rm expat-2.1.0.tar.gz
-		rm -r expat-2.1.0
+		rm -f expat-2.1.0.tar.gz
+		rm -rf expat-2.1.0
 	
 		#clean up lcms
-		rm lcms-1.19.tar.gz
-		rm -r lcms-1.19
+		rm -f lcms-1.19.tar.gz
+		rm -rf lcms-1.19
 	fi
 }
 

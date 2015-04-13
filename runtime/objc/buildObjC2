@@ -30,6 +30,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 		# apply patches
 		patch -p0 -i ../libobjc2_SONAME.patch
 		patch -p0 -i ../libobjc_android_test.diff
+		patch -p0 -i ../libobjc2_nil_define.diff
+		
 		popd
 	fi
 

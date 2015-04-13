@@ -1,0 +1,18 @@
+Index: objc/runtime.h
+===================================================================
+--- objc/runtime.h	(revision 38455)
++++ objc/runtime.h	(working copy)
+@@ -204,11 +204,11 @@
+ #endif
+ 
+ #ifndef nil
+-#	define nil ((id)_OBJC_NULL_PTR)
++#	define nil (_OBJC_NULL_PTR)
+ #endif
+ 
+ #ifndef Nil
+-#	define Nil ((Class)_OBJC_NULL_PTR)
++#	define Nil (_OBJC_NULL_PTR)
+ #endif
+ 
+ #include "slot.h"

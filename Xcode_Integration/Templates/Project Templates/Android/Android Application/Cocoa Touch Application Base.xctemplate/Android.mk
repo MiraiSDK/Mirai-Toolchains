@@ -35,7 +35,6 @@ LOCAL_MODULE    := gnustep-corebase
 LOCAL_SRC_FILES := $(TN_LIBRARY_PATH)/libgnustep-corebase.so
 include $(PREBUILT_SHARED_LIBRARY)
 
-
 include $(CLEAR_VARS)
 LOCAL_MODULE    := CoreGraphics
 LOCAL_SRC_FILES := $(TN_LIBRARY_PATH)/libCoreGraphics.so
@@ -51,15 +50,9 @@ LOCAL_MODULE    := CoreText
 LOCAL_SRC_FILES := $(TN_LIBRARY_PATH)/libCoreText.so
 include $(PREBUILT_SHARED_LIBRARY)
 
-
 include $(CLEAR_VARS)
 LOCAL_MODULE    := QuartzCore
 LOCAL_SRC_FILES := $(TN_LIBRARY_PATH)/libQuartzCore.so
-include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := ObjectiveZip
-LOCAL_SRC_FILES := $(TN_LIBRARY_PATH)/libObjectiveZip.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)

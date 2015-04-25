@@ -23,16 +23,7 @@ cleanUp()
 if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 
 	if [ ! -d libobjc2 ]; then
-		svn co http://svn.gna.org/svn/gnustep/libs/libobjc2/trunk libobjc2
-
-		pushd libobjc2
-
-		# apply patches
-		patch -p0 -i ../libobjc2_SONAME.patch
-		patch -p0 -i ../libobjc_android_test.diff
-		patch -p0 -i ../libobjc2_nil_define.diff
-		
-		popd
+		git clone https://github.com/MiraiSDK/libobjc2.git
 	fi
 
 	mkdir -p libobjc2/Build
@@ -41,8 +32,15 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 	rm -rf ./*
 
 	# disable test, some tests failed due to cross-compiled 
-	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" LDFLAGS="$ARCHLDFLAGS" cmake -DTESTS=0 -DCMAKE_TOOLCHAIN_FILE=$SCRIPT_ROOT/toolchain-$ABI.cmake -DCMAKE_FIND_ROOT_PATH=$MIRAI_SDK_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
-	make
+	CFLAGS="$ARCHFLAGS" CXXFLAGS="$ARCHFLAGS" LDFLAGS="$ARCHLDFLAGS" \
+	cmake -DCMAKE_BUILD_TYPE=Release \
+		  -DTESTS=0 \
+		  -DCMAKE_TOOLCHAIN_FILE=$SCRIPT_ROOT/toolchain-$ABI.cmake \
+		  -DCMAKE_FIND_ROOT_PATH=$MIRAI_SDK_PATH \
+		  -DCMAKE_INSTALL_PREFIX=/usr \
+		  -DENABLE_SOVERSION=0 \
+		  -DCXX_RUNTIME_NAME=libgnustl_shared.so ..
+	make -j4
 	checkError $? "build objc2 failed"
 	
 	make install DESTDIR=$STANDALONE_TOOLCHAIN_PATH/sysroot

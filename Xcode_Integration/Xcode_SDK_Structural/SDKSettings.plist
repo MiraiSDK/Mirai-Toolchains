@@ -20,7 +20,9 @@
 		<key>DEFAULT_COMPILER</key>
 		<string>org.tiny4.compilers.android.clang.3.3</string>
 		<key>OTHER_CFLAGS</key>
-		<string>-fobjc-nonfragile-abi</string>
+		<string>-fobjc-nonfragile-abi -fblocks -fobjc-runtime=gnustep-1.7</string>
+		<key>OTHER_LDFLAGS</key>
+		<string>-lgnustl_shared</string>
 	</dict>
 	<key>DisplayName</key>
 	<string>MacOS X 10.9</string>

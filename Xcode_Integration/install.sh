@@ -51,5 +51,15 @@ pushd `dirname $0`
 sh install_templates.sh
 popd
 
+#install headers
+if [[ "MIRAI_SDK_PREFIX" == "" ]]; then
+	echo "Unknow MIRAI_SDK_PREFIX"
+	exit 1
+fi
+
+pushd `dirname $0`
+cp Availability.h $MIRAI_SDK_PREFIX/include
+cp TargetConditionals.h $MIRAI_SDK_PREFIX/include
+popd
 
 

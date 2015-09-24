@@ -12,6 +12,7 @@ Options:
 	-n <NDK_PATH>: PATH of NDK
 	-k : keep downloaded files.
 	-h : show this help infomation
+	-f : force rebuild cocoa frameworks
 	"
 }
 
@@ -35,10 +36,12 @@ OPTION_ABI=arm
 OPTION_KEEP_FILES=no
 OPTION_NDK_PATH=""
 OPTION_JDK_PATH=""
+OPTION_REBUILD_COCOA=no
 
-while getopts 'a:jnkh' opt ; do
+while getopts 'a:fjnkh' opt ; do
 	 case $opt in
 		 a) OPTION_ABI=$OPTARG ;;
+		 f) OPTION_REBUILD_COCOA=yes ;;
 		 k) OPTION_KEEP_FILES=yes ;;
 		 n) OPTION_NDK_PATH=$OPTARG ;;
 		 j) OPTION_JDK_PATH=$OPTARG ;;
@@ -384,7 +387,8 @@ fi
 . $MIRAI_SDK_PREFIX/share/GNUstep/Makefiles/GNUstep.sh
 
 #9. Foundation(gnustep-base)
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-base.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libFoundation.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-Foundation
 	./toolchain_build.sh
 	checkError $? "build gnustep-base failed"
@@ -399,7 +403,8 @@ checkError $? "build dependencies failed"
 popd
 
 #11. CoreFoundation (gnustep-corebase)
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libgnustep-corebase.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreFoundation.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreFoundation
 	./toolchain_build.sh
 	checkError $? "build Core Foundation failed"
@@ -442,7 +447,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libcairo.a ]; then
 fi
 
 #15. Core Graphics (opal)
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreGraphics.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreGraphics
 	./toolchain_build.sh
 	checkError $? "build CoreGraphics failed"
@@ -454,7 +460,8 @@ fi
 #################
 
 #16.Core Text
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CoreText
 	./toolchain_build.sh
 	checkError $? "build CoreText failed"
@@ -462,7 +469,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libCoreText.so ]; then
 fi
 
 #17. OpenGL ES
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-OpenGLES
 	./toolchain_build.sh
 	checkError $? "build OpenGLES failed"
@@ -470,7 +478,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libOpenGLES.so ]; then
 fi
 
 #18. QuartzCore
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libQuartzCore.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-QuartzCore
 	./toolchain_build.sh
 	checkError $? "build QuartzCore failed"
@@ -484,7 +493,8 @@ fi
 #19. create a empty availability
 #20. TNJavaHelper
 #21. UIKit
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-UIKit
 	./toolchain_build.sh
 	checkError $? "build UIKit failed"
@@ -492,7 +502,8 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libUIKit.so ]; then
 fi
 
 #22. MediaPlayer
-if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ]; then
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
 	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-MediaPlayer
 	./toolchain_build.sh
 	checkError $? "build MediaPlayer failed"

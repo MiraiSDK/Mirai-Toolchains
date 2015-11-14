@@ -72,7 +72,9 @@ NSArray *breakpointsFromPath(NSString *path)
     NSMutableArray *breakPoints = [NSMutableArray array];
     for (NSXMLElement *breakpointProxy in breakpoints.children) {
         TNBreakPoint* bp = [TNBreakPoint breakPointWithProxyElement:breakpointProxy];
-        [breakPoints addObject:bp];
+        if (bp) {
+            [breakPoints addObject:bp];
+        }
     }
     
     return breakPoints;
@@ -148,7 +150,7 @@ int main(int argc, const char * argv[])
         [commands insertObject:@"set breakpoint pending on" atIndex:0];
         [commands addObject:@"b -[NSException raise]"];
         [commands addObject:@"set unwindonsignal on"];
-        [commands addObject:@"set pagination off"];
+        [commands insertObject:@"set pagination off" atIndex:0];
         [commands addObject:@"c"];
         [commands addObject:@""];
         NSString *output = [commands componentsJoinedByString:@"\n"];

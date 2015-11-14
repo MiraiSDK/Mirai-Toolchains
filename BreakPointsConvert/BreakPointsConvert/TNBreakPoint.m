@@ -39,6 +39,9 @@ static NSMutableDictionary *bpClasses = nil;
     NSString *BreakpointExtensionID = [[element attributeForName:@"BreakpointExtensionID"] stringValue];
 
     Class cl = [self classForExtensionID:BreakpointExtensionID];
+    if (cl == nil) {
+        NSLog(@"unsupported breakpoint ID:%@",BreakpointExtensionID);
+    }
     NSXMLElement *contentElement = (NSXMLElement *)[element childAtIndex:0];
     return [[cl alloc] initWithContentElement:contentElement];
 }

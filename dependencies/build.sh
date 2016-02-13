@@ -28,8 +28,8 @@ cleanUp()
 		rm -rf tiff-4.0.3
 		
 		#clean up freetype
-		rm -f freetype-2.5.1.tar.gz
-		rm -rf freetype-2.5.1
+		rm -f freetype-2.6.3.tar.gz
+		rm -rf freetype-2.6.3
 		
 		#clean up fontconfig
 		rm -rf fontconfig
@@ -76,18 +76,19 @@ buildLibPNG()
 
 buildLibJPEG()
 {
-	if [ ! -d libjpeg-turbo-1.3.0 ]; then
-		if [ ! -f libjpeg-turbo-1.3.0.tar.gz ]; then
+	if [ ! -d libjpeg-turbo-1.4.2 ]; then
+		if [ ! -f libjpeg-turbo-1.4.2.tar.gz ]; then
 			echo "Download libjpeg-turbo..."
-			curl -O http://heanet.dl.sourceforge.net/project/libjpeg-turbo/1.3.0/libjpeg-turbo-1.3.0.tar.gz
+			curl -O http://nchc.dl.sourceforge.net/project/libjpeg-turbo/1.4.2/libjpeg-turbo-1.4.2.tar.gz
+			checkError $? "Download libjpeg-turbo failed"
 		fi
-		tar -xvf libjpeg-turbo-1.3.0.tar.gz
+		tar -xvf libjpeg-turbo-1.4.2.tar.gz
 		
-		cp $GNUSTEP_MAKE_CONFIG_PATH/config.sub libjpeg-turbo-1.3.0/config.sub
-		cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess libjpeg-turbo-1.3.0/config.guess
+		cp $GNUSTEP_MAKE_CONFIG_PATH/config.sub libjpeg-turbo-1.4.2/config.sub
+		cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess libjpeg-turbo-1.4.2/config.guess
 	fi
 
-	pushd libjpeg-turbo-1.3.0
+	pushd libjpeg-turbo-1.4.2
 
 	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB \
 	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX
@@ -135,17 +136,19 @@ buildLibTIFF()
 
 buildFreetype()
 {
-	if [ ! -d freetype-2.5.1 ]; then
-		if [ ! -f freetype-2.5.1.tar.gz ]; then
-			curl -O http://ftp.twaren.net/Unix/NonGNU//freetype/freetype-2.5.1.tar.gz
+	if [ ! -d freetype-2.6.3 ]; then
+		if [ ! -f freetype-2.6.3.tar.gz ]; then
+			#curl -O http://ftp.twaren.net/Unix/NonGNU//freetype/freetype-2.5.1.tar.gz
+			curl -L -O http://jaist.dl.sourceforge.net/project/freetype/freetype2/2.6.3/freetype-2.6.3.tar.gz
+			checkError $? "Download freetype failed"
 		fi
-		tar -xvf freetype-2.5.1.tar.gz
+		tar -xvf freetype-2.6.3.tar.gz
 	fi
 
-	pushd freetype-2.5.1
+	pushd freetype-2.6.3
 	
-	LIBPNG_CFLAGS="-I$PREFIX/include/libpng16" LIBPNG_LIBS="-L$PREFIX/lib -lpng16" \
-	CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX --without-zlib
+	#LIBPNG_CFLAGS="-I$PREFIX/include/libpng16" LIBPNG_LIBS="-L$PREFIX/lib -lpng16" \
+	CC=$CROSS_CLANG CFLAGS="$ARCHFLAGS" CPPFLAGS="$ARCHFLAGS" ./configure --host=$HOSTEABI --prefix=$PREFIX --without-zlib --without-harfbuzz
 	checkError $? "Configure freetype failed"
 	
 	make -j4
@@ -177,7 +180,8 @@ buildFontconfig()
 	pushd fontconfig
 
 	export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
-	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB CFLAGS="$ARCHFLAGS -DANDROID" CPPFLAGS="$ARCHFLAGS -DANDROID"  ./configure --host=$HOSTEABI --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes #--with-cache-dir="/sdcard/.fccache"
+	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR RANLIB=$CROSS_RANLIB CFLAGS="$ARCHFLAGS -DANDROID" CPPFLAGS="$ARCHFLAGS -DANDROID" \
+	  ./configure --host=$HOSTEABI --prefix=$PREFIX  --with-default-fonts="/data/local/tmp/fonts" --enable-static=yes --enable-shared=no #--with-cache-dir="/sdcard/.fccache"
 	checkError $? "configure fontconfig failed"
 	make -j4
 	checkError $? "Make fontconfig failed"
@@ -195,6 +199,7 @@ buildExpat()
 	if [ ! -d expat-2.1.0 ]; then
 		if [ ! -f expat-2.1.0.tar.gz ]; then
 			curl -O http://heanet.dl.sourceforge.net/project/expat/expat/2.1.0/expat-2.1.0.tar.gz
+			checkError $? "Download expat failed"
 		fi
 		
 		tar -xvf expat-2.1.0.tar.gz
@@ -222,6 +227,7 @@ buildLCMS()
 	if [ ! -d lcms-1.19 ]; then
 		if [ ! -f lcms-1.19.tar.gz ]; then
 			curl -O http://heanet.dl.sourceforge.net/project/lcms/lcms/1.19/lcms-1.19.tar.gz
+			checkError $? "Download lcms failed"
 		fi
 		
 		tar -xvf lcms-1.19.tar.gz

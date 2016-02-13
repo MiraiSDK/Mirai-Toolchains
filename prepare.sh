@@ -113,10 +113,10 @@ if [ "$OPTION_JDK_PATH" != "" ]; then
 fi
 
 if [ "$ANDROID_NDK_PATH" == "" ]; then
-export ANDROID_NDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/android-ndk-r9b"
+export ANDROID_NDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/android-ndk-r10e"
 fi
 if [ "$ANDROID_JDK_PATH" == "" ]; then
-export ANDROID_JDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/adt-bundle-mac-x86_64-20131030/sdk"
+export ANDROID_JDK_PATH="$MIRAI_PRODUCTS_ANDROID_PATH/android-sdk-macosx"
 fi
 
 ### folder setting
@@ -172,13 +172,13 @@ cleanUp()
 		#clean up ndk 
 		pushd $MIRAI_PRODUCTS_ANDROID_PATH
 			if [ -d $ANDROID_NDK_PATH ]; then
-				rm android-ndk-r9b-darwin-x86_64.tar.bz2
+				rm android-ndk-r10e-darwin-x86_64.bin
 			fi
 		popd
 		
 		#clean up jdk
 		pushd $MIRAI_PRODUCTS_ANDROID_PATH
-			rm adt-bundle-mac-x86_64-20131030.zip
+			rm android-sdk_r24.4.1-macosx.zip
 		popd
 		
 		#clean up
@@ -212,13 +212,22 @@ if [ ! -d $ANDROID_NDK_PATH ]; then
 	pushd $MIRAI_PRODUCTS_ANDROID_PATH
 	
 	echo "Missing Android NDK, will download it, if you already has NDK, please set it to environment: ANDROID_NDK_PATH"
+
+	if [[ `uname -s` != "Darwin" ]]; then
+		echo "Mac OS X is the only supported system"
+		exit 1
+	fi
+
 	
-	if [ ! -f android-ndk-r9b-darwin-x86_64.tar.bz2 ]; then
+	if [ ! -f android-ndk-r10e-darwin-x86_64.bin ]; then
 		echo "Downloadng Android NDK..."
-		curl -O http://dl.google.com/android/ndk/android-ndk-r9b-darwin-x86_64.tar.bz2
+		echo "Getting http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin"
+		curl -O http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin
+		checkError $? "Download ndk failed.."
+		chmod a+x android-ndk-r10e-darwin-x86_64.bin
 	fi
 	
-	tar -xvyf android-ndk-r9b-darwin-x86_64.tar.bz2
+	./android-ndk-r10e-darwin-x86_64.bin
 	
 	#patch 
 	pushd $ANDROID_NDK_PATH
@@ -234,12 +243,14 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	pushd $MIRAI_PRODUCTS_ANDROID_PATH
 	
 	echo "Missing Android SDK, will download it, if you already has Android SDK, please set it to environment: ANDROID_JDK_PATH"
-	if [ ! -f adt-bundle-mac-x86_64-20131030.zip ]; then
-		echo "Downloadng Android SDK adt-bundle-mac-x86_64-20131030.zip..."
-		curl -O http://dl.google.com/android/adt/adt-bundle-mac-x86_64-20131030.zip
+	if [ ! -f android-sdk_r24.4.1-macosx.zip ]; then
+		echo "Downloadng Android SDK ..."
+		echo "Getting android-sdk_r24.4.1-macosx.zip"
+		curl -O http://dl.google.com/android/android-sdk_r24.4.1-macosx.zip
+		checkError $? "Download Android SDK failed.."
 	fi
 	
-	tar -vxzf adt-bundle-mac-x86_64-20131030.zip
+	tar -vxzf android-sdk_r24.4.1-macosx.zip
 	if [ ! -d $ANDROID_JDK_PATH ]; then
 		echo "Missing Android SDK folder, take a look what's extracted folder name"
 		exit 1;
@@ -248,9 +259,11 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	popd
 fi
 
+##TODO: rebuild clang
+
 #2. make standalone toolchain path
 if [ ! -d $STANDALONE_TOOLCHAIN_PATH ]; then
-    $ANDROID_NDK_PATH/build/tools/make-standalone-toolchain.sh --platform="android-14" --install-dir=$STANDALONE_TOOLCHAIN_PATH --arch=$ABI --llvm-version=3.3
+    $ANDROID_NDK_PATH/build/tools/make-standalone-toolchain.sh --platform="android-14" --install-dir=$STANDALONE_TOOLCHAIN_PATH --arch=$ABI --llvm-version=3.6
 	
 	
 	cp $ANDROID_NDK_PATH/sources/cxx-stl/gnu-libstdc++/4.8/libs/$ABILIBNAME/libgnustl_shared.so $STANDALONE_TOOLCHAIN_PATH/sysroot/usr/lib/

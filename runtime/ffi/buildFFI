@@ -20,20 +20,20 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libffi.a ]; then
     echo "Building libffi"
 
     if [ ! -d libffi ]; then
-        git clone git://github.com/atgreen/libffi.git
+        git clone https://github.com/atgreen/libffi.git
 		
 	    cp $GNUSTEP_MAKE_CONFIG_PATH/config.sub libffi
 	    cp $GNUSTEP_MAKE_CONFIG_PATH/config.guess libffi
 		
 		pushd libffi
-		git checkout v3.0.13
+		
+		git checkout 6ba2a49e226b859ddde9a37c34973cf85380c525
 		
 	    patch -p1 -i ../libffi_closures.patch
 
 	    patch -p0 -i ../libffi-include-Makefile_am.patch
 		
-	    aclocal
-	    automake
+	    ./autogen.sh
 		
 		popd
     fi

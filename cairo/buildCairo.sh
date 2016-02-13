@@ -2,6 +2,8 @@
 
 PREFIX=$MIRAI_SDK_PREFIX
 
+CAIRO_VERSION=1.14.6
+
 checkError()
 {
     if [ "${1}" -ne "0" ]; then
@@ -18,8 +20,8 @@ cleanUp()
 		rm pixman-0.32.4.tar.gz
 	
 		#clean up cairo
-		rm -r cairo-1.12.14
-		rm cairo-1.12.14.tar.xz
+		rm -r cairo-$CAIRO_VERSION
+		rm cairo-$CAIRO_VERSION.tar.xz
 	
 	fi
 }
@@ -43,15 +45,17 @@ buildPixman()
 {
 	buildCPUFeature
 	
-	if [ ! -d pixman-0.32.4 ]; then
-		if [ ! -f pixman-0.32.4.tar.gz ]; then
+	if [ ! -d pixman-0.34.0 ]; then
+		if [ ! -f pixman-0.34.0.tar.gz ]; then
 			echo "Download pixman..."
-			curl -O http://cairographics.org/releases/pixman-0.32.4.tar.gz
+			# curl -O http://cairographics.org/releases/pixman-0.32.4.tar.gz
+			curl -O http://cairographics.org/releases/pixman-0.34.0.tar.gz
+			checkError $? "Download pixman failed"
 		fi
-		tar -xvf pixman-0.32.4.tar.gz
+		tar -xvf pixman-0.34.0.tar.gz
 	fi
 
-	pushd pixman-0.32.4
+	pushd pixman-0.34.0
 
 	CPUFEATURES_INCLUDE=$ANDROID_NDK_PATH/sources/android/cpufeatures
 	FLAGS="$ARCHFLAGS --sysroot $MIRAI_SDK_PATH -I$CPUFEATURES_INCLUDE -DPIXMAN_NO_TLS"
@@ -60,6 +64,7 @@ buildPixman()
 	CFLAGS="$FLAGS" LDFLAGS="$ARCHLDFLAGS -l$MIRAI_SDK_PREFIX/lib/cpufeatures.a" \
 	PNG_CFLAGS="-I$MIRAI_SDK_PREFIX/include" PNG_LIBS="-L$MIRAI_SDK_PREFIX/lib -lpng" \
 	./configure --host=$HOSTEABI --prefix=$PREFIX
+	checkError $? "Configure pixman failed"
 	
 	make -j4
 	checkError $? "Make pixman failed"
@@ -73,19 +78,21 @@ buildPixman()
 #3. 
 buildCairo()
 {
-	if [ ! -d cairo-1.12.14 ]; then
-		if [ ! -f cairo-1.12.14.tar.xz ]; then
-			curl -O http://cairographics.org/releases/cairo-1.12.14.tar.xz
+	
+	if [ ! -d cairo-$CAIRO_VERSION ]; then
+		if [ ! -f cairo-$CAIRO_VERSION.tar.xz ]; then
+			curl -O http://cairographics.org/releases/cairo-$CAIRO_VERSION.tar.xz
+			checkError $? "Download cairo failed"
 		fi
-		tar -xJf cairo-1.12.14.tar.xz
+		tar -xJf cairo-$CAIRO_VERSION.tar.xz
 		
-		pushd cairo-1.12.14
+		pushd cairo-$CAIRO_VERSION
 		patch -p1 -i ../cairo_android_lconv.patch
 		popd
 	fi
 
 	# compile
-	pushd cairo-1.12.14
+	pushd cairo-$CAIRO_VERSION
 	export PKG_CONFIG_LIBDIR="$MIRAI_SDK_PREFIX/lib/pkgconfig:$MIRAI_SDK_PREFIX/share/pkgconfig"
 	export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
 	ARMCFLAGS="$ARCHFLAGS -DANDROID --sysroot $MIRAI_SDK_PATH -g"

@@ -523,6 +523,46 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libMediaPlayer.so ] ||
 	popd
 fi
 
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libAVFoundation.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-AVFoundation
+	./toolchain_build.sh
+	checkError $? "build AVFoundation failed"
+	popd
+fi
+
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libCommonCrypto.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-CommonCrypto
+	./toolchain_build.sh
+	checkError $? "build CommonCrypto failed"
+	popd
+fi
+
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libImageIO.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-ImageIO
+	./toolchain_build.sh
+	checkError $? "build ImageIO failed"
+	popd
+fi
+
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libSecurity.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-Security
+	./toolchain_build.sh
+	checkError $? "build Security failed"
+	popd
+fi
+
+if [ ! -f $MIRAI_SDK_PREFIX/lib/libSystemConfiguration.so ] || 
+	[ "$OPTION_REBUILD_COCOA" == "yes" ]; then
+	pushd $MIRAI_PROJECT_ROOT_PATH/Mirai-SystemConfiguration
+	./toolchain_build.sh
+	checkError $? "build SystemConfiguration failed"
+	popd
+fi
+
 #Print Successful Message
 echo ""
 echo ""

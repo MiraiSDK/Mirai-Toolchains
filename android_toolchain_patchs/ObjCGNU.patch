@@ -1,0 +1,87 @@
+correct fill result with 0 while send message to nil and
+the return type is larger than pointer size
+--- lib/CodeGen/CGObjCGNU.cpp	2016-02-14 17:45:47.000000000 +0800
++++ lib/CodeGen/CGObjCGNU.cpp	2016-02-14 18:12:53.000000000 +0800
+@@ -1347,18 +1347,17 @@
+   bool isPointerSizedReturn = (ResultType->isAnyPointerType() ||
+       ResultType->isIntegralOrEnumerationType() || ResultType->isVoidType());
+ 
+-  llvm::BasicBlock *startBB = nullptr;
+   llvm::BasicBlock *messageBB = nullptr;
+   llvm::BasicBlock *continueBB = nullptr;
++  llvm::BasicBlock *nullBB = nullptr;
+ 
+   if (!isPointerSizedReturn) {
+-    startBB = Builder.GetInsertBlock();
+     messageBB = CGF.createBasicBlock("msgSend");
+-    continueBB = CGF.createBasicBlock("continue");
++    nullBB = CGF.createBasicBlock("null-receiver");
+ 
+     llvm::Value *isNil = Builder.CreateICmpEQ(Receiver, 
+             llvm::Constant::getNullValue(Receiver->getType()));
+-    Builder.CreateCondBr(isNil, continueBB, messageBB);
++    Builder.CreateCondBr(isNil, nullBB, messageBB);
+     CGF.EmitBlock(messageBB);
+   }
+ 
+@@ -1424,35 +1423,41 @@
+ 
+   if (!isPointerSizedReturn) {
+     messageBB = CGF.Builder.GetInsertBlock();
+-    CGF.Builder.CreateBr(continueBB);
+-    CGF.EmitBlock(continueBB);
++      if (messageBB) {
++          continueBB = CGF.createBasicBlock("continue");
++          CGF.Builder.CreateBr(continueBB);
++      }
++      
++    
++    CGF.EmitBlock(nullBB);
++      if (msgRet.isScalar() && ResultType->isVoidType()) {
++          //nothing
++      } else
+     if (msgRet.isScalar()) {
+-      llvm::Value *v = msgRet.getScalarVal();
+-      llvm::PHINode *phi = Builder.CreatePHI(v->getType(), 2);
+-      phi->addIncoming(v, messageBB);
+-      phi->addIncoming(llvm::Constant::getNullValue(v->getType()), startBB);
+-      msgRet = RValue::get(phi);
++        llvm::Constant *null = CGF.CGM.EmitNullConstant(ResultType);
++        if (!continueBB) return RValue::get(null);
++        
++        CGF.EmitBlock(continueBB);
++        llvm::PHINode *phi = CGF.Builder.CreatePHI(null->getType(), 2);
++        phi->addIncoming(msgRet.getScalarVal(), messageBB);
++        phi->addIncoming(null, nullBB);
++        return RValue::get(phi);
+     } else if (msgRet.isAggregate()) {
+-      llvm::Value *v = msgRet.getAggregateAddr();
+-      llvm::PHINode *phi = Builder.CreatePHI(v->getType(), 2);
+-      llvm::PointerType *RetTy = cast<llvm::PointerType>(v->getType());
+-      llvm::AllocaInst *NullVal = 
+-          CGF.CreateTempAlloca(RetTy->getElementType(), "null");
+-      CGF.InitTempAlloca(NullVal,
+-          llvm::Constant::getNullValue(RetTy->getElementType()));
+-      phi->addIncoming(v, messageBB);
+-      phi->addIncoming(NullVal, startBB);
+-      msgRet = RValue::getAggregate(phi);
++        CGF.EmitNullInitialization(msgRet.getAggregateAddr(), ResultType);
++        if (continueBB) {
++            CGF.EmitBlock(continueBB);
++        }
++        
+     } else /* isComplex() */ {
+       std::pair<llvm::Value*,llvm::Value*> v = msgRet.getComplexVal();
+       llvm::PHINode *phi = Builder.CreatePHI(v.first->getType(), 2);
+       phi->addIncoming(v.first, messageBB);
+       phi->addIncoming(llvm::Constant::getNullValue(v.first->getType()),
+-          startBB);
++          nullBB);
+       llvm::PHINode *phi2 = Builder.CreatePHI(v.second->getType(), 2);
+       phi2->addIncoming(v.second, messageBB);
+       phi2->addIncoming(llvm::Constant::getNullValue(v.second->getType()),
+-          startBB);
++          nullBB);
+       msgRet = RValue::getComplex(phi, phi2);
+     }
+   }

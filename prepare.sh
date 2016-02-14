@@ -259,7 +259,10 @@ if [ ! -d $ANDROID_JDK_PATH ]; then
 	popd
 fi
 
-##TODO: rebuild clang
+##rebuild clang
+pushd $SCRIPT_ROOT/android_toolchain_patchs
+./patch_clang.sh
+popd 
 
 #2. make standalone toolchain path
 if [ ! -d $STANDALONE_TOOLCHAIN_PATH ]; then

@@ -1,0 +1,16 @@
+--- util/cairo-trace/trace.c	2015-10-28 05:04:22.000000000 +0800
++++ util/cairo-trace/trace.c	2016-02-15 23:43:11.000000000 +0800
+@@ -538,8 +538,13 @@
+     if (d == 0.0)
+ 	d = 0.0;
+ 
++
+     locale_data = localeconv ();
++#ifdef __ANDROID__
++    decimal_point = "."; // Android doesn't implempment localeconv
++#else
+     decimal_point = locale_data->decimal_point;
++#endif
+     decimal_point_len = strlen (decimal_point);
+ 
+     /* Using "%f" to print numbers less than 0.1 will result in

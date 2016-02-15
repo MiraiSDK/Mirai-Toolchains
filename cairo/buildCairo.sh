@@ -70,6 +70,7 @@ buildPixman()
 	checkError $? "Make pixman failed"
 	
 	make install
+	checkError $? "Install pixman failed"
 
 	popd	
 }
@@ -87,7 +88,7 @@ buildCairo()
 		tar -xJf cairo-$CAIRO_VERSION.tar.xz
 		
 		pushd cairo-$CAIRO_VERSION
-		patch -p1 -i ../cairo_android_lconv.patch
+		patch -p0 -i ../cairo_util_trace_lconv.patch
 		popd
 	fi
 
@@ -100,19 +101,23 @@ buildCairo()
 	CC=$CROSS_CLANG CXX=$CROSS_CLANGPP AR=$CROSS_AR \
 	CPPFLAGS="$ARMCFLAGS" CFLAGS="$ARMCFLAGS" ./configure --host=$HOSTEABI \
 	--prefix=$PREFIX --enable-xlib=no --enable-xcb=no --enable-glesv2
-	
+	checkError $? "Configure cairo failed"
+
 	make -j4
+	checkError $? "Make cairo failed"
+
 	make install
+	checkError $? "Install cairo failed"
 
 	popd
 }
 
 
 buildPixman
-checkError $? "Make pixman failed"
+checkError $? "Build pixman failed"
 
 buildCairo
-checkError $? "Make cairo failed"
+checkError $? "Build cairo failed"
 
 #we enable cairo glesv2, needs let pkgconfig know where is glesv2
 #otherwise anything depends cairo will failed.

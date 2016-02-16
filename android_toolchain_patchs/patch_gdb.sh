@@ -48,7 +48,7 @@ build_gdb()
 		exit 1
 	esac
 	
-	./configure --target=$GDB_TARGET --prefix=$STANDALONE_TOOLCHAIN_PATH --program-prefix="$TOOL_PREFIX-"
+	CFLAGS="-Wno-absolute-value" ./configure --target=$GDB_TARGET --prefix=$STANDALONE_TOOLCHAIN_PATH --program-prefix="$TOOL_PREFIX-"
 	checkError $? "gdb configure failed"
 
 	make -j4
@@ -62,9 +62,9 @@ build_gdb()
 
 #check version
 
-GDBVERSION=`$STANDALONE_TOOLCHAIN_PATH/bin/$CROSS_GDB --version | head -n 1`
+GDB_PATHCH_LOCK_FILE="$STANDALONE_TOOLCHAIN_PATH/bin/$CROSS_GDB.patched.lock"
 echo "gdb version: $GDBVERSION"
-if [[ "$GDBVERSION" != "GNU gdb (GDB) 7.7" ]]; then
+if [[ ! -f $GDB_PATHCH_LOCK_FILE ]]; then
 	echo "building gdb 7.7..."
 	
 	build_gdb
@@ -73,6 +73,8 @@ if [[ "$GDBVERSION" != "GNU gdb (GDB) 7.7" ]]; then
 	checkError $? "gdb build failed"
 	
 	patch -Np0 -d $ANDROID_NDK_PATH < ./gdb_path.patch
+
+	touch $GDB_PATHCH_LOCK_FILE
 	
 fi
 

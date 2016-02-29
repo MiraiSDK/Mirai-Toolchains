@@ -293,7 +293,7 @@ popd
 
 # copy Xcode SDK directory structural
 cp -R "$SCRIPT_ROOT/Xcode_Integration/Xcode_SDK_Structural/" "$MIRAI_LOCAL_XCODE_SDK_PATH_ARCH"
-rm -r $MIRAI_LOCAL_XCODE_SDK_PATH
+rm -rf $MIRAI_LOCAL_XCODE_SDK_PATH
 ln -sf $MIRAI_LOCAL_XCODE_SDK_PATH_ARCH $MIRAI_LOCAL_XCODE_SDK_PATH
 
 # link  between android-toolchain an mirai-toolchiain

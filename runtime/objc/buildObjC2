@@ -24,6 +24,9 @@ if [ ! -f $MIRAI_SDK_PREFIX/lib/libobjc.so ]; then
 
 	if [ ! -d libobjc2 ]; then
 		git clone https://github.com/MiraiSDK/libobjc2.git
+		pushd libobjc2
+		git checkout 02488ed8bcfc6612796d69b52b9a57c5c0b45f61
+		popd
 	fi
 
 	mkdir -p libobjc2/Build

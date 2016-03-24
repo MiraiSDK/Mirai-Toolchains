@@ -53,8 +53,9 @@ buildOSXVersion()
 
 		../icu/source/runConfigureICU MacOSX --prefix=$PWD/icu_build --enable-extras=no --enable-strict=no -enable-static -enable-shared --enable-tests=no --enable-samples=no --enable-dyload=no --enable-debug
 		make -j4
+		checkError $? "Make osx version failed"
 		make install
-	    checkError $? "Make install osx version failed"
+	    checkError $? "install osx version failed"
 	
 		popd	
 	fi
@@ -96,7 +97,9 @@ buildAndroidVersion()
 	--enable-tests=no --enable-samples=no --enable-dyload=no \
 	--host=$HOSTEABI --prefix=$ICU_PREFIX --enable-debug
 	make -j4
+	checkError $? "Make android version failed"
 	make install 
+	checkError $? "install android version failed"
 
 	popd
 }

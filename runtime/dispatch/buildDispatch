@@ -19,7 +19,7 @@ cleanUp()
 build_opengcd()
 {
 	if [ ! -d opengcd ]; then
-		git clone https://github.com/mheily/opengcd.git
+		git clone https://github.com/sycx/opengcd.git
 		pushd opengcd
 		./autogen.sh
 	
